@@ -9,12 +9,6 @@ import subprocess
 from docxtpl import DocxTemplate
 from pypdf import PdfMerger
 
-# ReportLab Fallback Engine for 100% Guaranteed Cloud PDF rendering
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from docx import Document
-
 app = Flask(__name__)
 
 DOCS_FOLDER = os.path.join(os.path.dirname(__file__), 'Docs')
@@ -29,56 +23,25 @@ def extract_placeholders(docx_path):
     except Exception:
         return []
 
-def docx_to_pdf_reportlab(docx_path, pdf_path):
-    try:
-        doc = Document(docx_path)
-        pdf_doc = SimpleDocTemplate(
-            pdf_path,
-            pagesize=letter,
-            rightMargin=36,
-            leftMargin=36,
-            topMargin=36,
-            bottomMargin=36
-        )
-        
-        styles = getSampleStyleSheet()
-        normal_style = styles['Normal']
-        normal_style.fontSize = 10
-        normal_style.leading = 14
-
-        story = []
-        for p in doc.paragraphs:
-            text = p.text.strip()
-            if text:
-                # Basic bold rendering for generated text
-                safe_text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                story.append(Paragraph(safe_text, normal_style))
-                story.append(Spacer(1, 6))
-            else:
-                story.append(Spacer(1, 8))
-
-        pdf_doc.build(story)
-        return True
-    except Exception as err:
-        print("Reportlab error:", err)
-        return False
-
-def convert_to_pdf(doc_path, output_dir):
+def convert_docx_to_pdf_exact(doc_path, output_dir):
     pdf_name = os.path.basename(doc_path).replace('.docx', '.pdf')
     pdf_path = os.path.join(output_dir, pdf_name)
 
-    # 1. Try LibreOffice if available in server image
-    try:
-        res = subprocess.run([
-            'libreoffice', '--headless', '--convert-to', 'pdf',
-            doc_path, '--outdir', output_dir
-        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=15)
-        if os.path.exists(pdf_path):
-            return pdf_path
-    except Exception:
-        pass
+    # 1. Native LibreOffice CLI (Preserves 100% Alignment, Margins & Tables)
+    commands = [
+        ['libreoffice', '--headless', '--convert-to', 'pdf:writer_pdf_Export', doc_path, '--outdir', output_dir],
+        ['soffice', '--headless', '--convert-to', 'pdf:writer_pdf_Export', doc_path, '--outdir', output_dir]
+    ]
 
-    # 2. Try Windows MS Word COM API (if running on local machine)
+    for cmd in commands:
+        try:
+            res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=25)
+            if os.path.exists(pdf_path) and os.path.getsize(pdf_path) > 0:
+                return pdf_path
+        except Exception:
+            continue
+
+    # 2. Local Machine Fallback (Windows MS Word API)
     try:
         from docx2pdf import convert
         convert(doc_path, pdf_path)
@@ -86,10 +49,6 @@ def convert_to_pdf(doc_path, output_dir):
             return pdf_path
     except Exception:
         pass
-
-    # 3. Pure Python Cloud Engine (Always succeeds on Render Free tier)
-    if docx_to_pdf_reportlab(doc_path, pdf_path) and os.path.exists(pdf_path):
-        return pdf_path
 
     return None
 
@@ -139,27 +98,22 @@ def generate_complete_zip():
                         src_path = os.path.join(root, file)
                         doc = DocxTemplate(src_path)
                         
-                        # Empty fields replace with blank lines
                         render_context = {k: (v if v else "______________________") for k, v in form_data.items()}
                         doc.render(render_context)
                         
-                        # 1. Save & Zip DOCX
                         filled_docx_path = os.path.join(temp_dir, file)
                         doc.save(filled_docx_path)
                         
                         with open(filled_docx_path, 'rb') as f:
                             master_zip.writestr(f"Word_Files/{file}", f.read())
                         
-                        # 2. Convert to Individual PDF & Zip
-                        pdf_path = convert_to_pdf(filled_docx_path, temp_dir)
+                        pdf_path = convert_docx_to_pdf_exact(filled_docx_path, temp_dir)
                         if pdf_path and os.path.exists(pdf_path):
                             pdf_file_name = os.path.basename(pdf_path)
                             with open(pdf_path, 'rb') as pf:
                                 master_zip.writestr(f"PDF_Files/{pdf_file_name}", pf.read())
-                            
                             generated_pdf_paths.append(pdf_path)
 
-            # 3. Create ALL-IN-ONE Merged PDF booklet at Root of ZIP
             if generated_pdf_paths:
                 for p_path in generated_pdf_paths:
                     pdf_merger.append(p_path)
