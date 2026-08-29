@@ -5,8 +5,7 @@ import re
 import shutil
 import tempfile
 import zipfile
-from docxtpl import DocxTemplate
-from pypdf import PdfMerger
+from docxtpl import DocxTemplate, RichText
 
 app = Flask(__name__)
 
@@ -59,15 +58,24 @@ def generate_complete_zip():
     zip_buffer = io.BytesIO()
 
     try:
+        # Prepare Context: Only User Filled Data is BOLD via RichText
+        render_context = {}
+        for key, val in form_data.items():
+            if val and str(val).strip():
+                # User filled value will be strictly BOLD
+                render_context[key] = RichText(f" {str(val).strip()} ", bold=True)
+            else:
+                # Unfilled field remains normal blank line
+                render_context[key] = "______________________"
+
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as master_zip:
             for root, _, files in os.walk(DOCS_FOLDER):
-                for file in sorted(files):
+                for file in files:
                     if file in selected_docs:
                         src_path = os.path.join(root, file)
                         doc = DocxTemplate(src_path)
                         
-                        # Empty fields replace with blank lines
-                        render_context = {k: (v if v else "______________________") for k, v in form_data.items()}
+                        # Render with Bold RichText
                         doc.render(render_context)
                         
                         # Save filled DOCX
