@@ -5,13 +5,11 @@ import re
 import shutil
 import tempfile
 import zipfile
-import xml.etree.ElementTree as ET
+from docxtpl import DocxTemplate
 
 app = Flask(__name__)
 
 DOCS_FOLDER = os.path.join(os.path.dirname(__file__), 'Docs')
-W_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
-XML_NS = "{http://www.w3.org/XML/1998/namespace}"
 
 def extract_placeholders(docx_path):
     try:
@@ -23,93 +21,11 @@ def extract_placeholders(docx_path):
     except Exception:
         return []
 
-def safe_replace_xml_with_bold(xml_bytes, form_data):
-    try:
-        # Register namespaces to prevent Word XML syntax damage
-        ET.register_namespace('w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main')
-        ET.register_namespace('r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships')
-        ET.register_namespace('m', 'http://schemas.openxmlformats.org/officeDocument/2006/math')
-        ET.register_namespace('v', 'urn:schemas-microsoft-com:vml')
-        ET.register_namespace('wp', 'http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing')
-        ET.register_namespace('w14', 'http://schemas.microsoft.com/office/word/2010/wordml')
-
-        tree = ET.fromstring(xml_bytes)
-
-        # Loop through all paragraphs
-        for p in tree.iter(f"{W_NS}p"):
-            p_children = list(p)
-            for idx, r in enumerate(p_children):
-                if r.tag != f"{W_NS}r":
-                    continue
-
-                t_nodes = r.findall(f"{W_NS}t")
-                if not t_nodes:
-                    continue
-
-                full_run_text = "".join([t.text or "" for t in t_nodes])
-                if "{{" not in full_run_text:
-                    continue
-
-                # Check which key is in this run
-                matched_key = None
-                for key in form_data:
-                    placeholder = "{{" + key + "}}"
-                    if placeholder in full_run_text:
-                        matched_key = key
-                        break
-
-                if matched_key:
-                    placeholder = "{{" + matched_key + "}}"
-                    user_val = form_data.get(matched_key, "").strip()
-                    is_filled = bool(user_val)
-                    insert_text = f" {user_val} " if is_filled else "______________________"
-
-                    parts = full_run_text.split(placeholder)
-                    parent_idx = list(p).index(r)
-                    p.remove(r)
-
-                    existing_rPr = r.find(f"{W_NS}rPr")
-
-                    insert_offset = 0
-                    for p_i, part in enumerate(parts):
-                        if part:
-                            # Before/After normal text
-                            new_r = ET.Element(f"{W_NS}r")
-                            if existing_rPr is not None:
-                                new_r.append(ET.fromstring(ET.tostring(existing_rPr)))
-                            new_t = ET.SubElement(new_r, f"{W_NS}t")
-                            new_t.set(f"{XML_NS}space", "preserve")
-                            new_t.text = part
-                            p.insert(parent_idx + insert_offset, new_r)
-                            insert_offset += 1
-
-                        # Insert filled value
-                        if p_i < len(parts) - 1:
-                            val_r = ET.Element(f"{W_NS}r")
-                            val_rPr = ET.fromstring(ET.tostring(existing_rPr)) if existing_rPr is not None else ET.Element(f"{W_NS}rPr")
-                            
-                            # Apply BOLD only if filled by user
-                            if is_filled:
-                                if val_rPr.find(f"{W_NS}b") is None:
-                                    ET.SubElement(val_rPr, f"{W_NS}b")
-                            
-                            if len(val_rPr) > 0 or is_filled:
-                                val_r.append(val_rPr)
-
-                            val_t = ET.SubElement(val_r, f"{W_NS}t")
-                            val_t.set(f"{XML_NS}space", "preserve")
-                            val_t.text = insert_text
-                            p.insert(parent_idx + insert_offset, val_r)
-                            insert_offset += 1
-
-        return ET.tostring(tree, encoding='utf-8', xml_declaration=True)
-    except Exception:
-        return xml_bytes
-
 @app.route('/')
 def home():
     return render_template('index.html')
 
+# API: Templates aur Placeholders auto-load karne ke liye
 @app.route('/api/get-docs', methods=['GET'])
 def get_docs():
     files_list = []
@@ -130,6 +46,7 @@ def get_docs():
                     })
     return jsonify(files_list)
 
+# API: Stable ZIP Generation (Pure DOCX)
 @app.route('/generate-complete-zip', methods=['POST'])
 def generate_complete_zip():
     data = request.json
@@ -139,27 +56,30 @@ def generate_complete_zip():
     if not borrower_name:
         borrower_name = 'Customer'
 
+    temp_dir = tempfile.mkdtemp()
     zip_buffer = io.BytesIO()
 
     try:
+        # Unfilled values ko blank line se replace karna
+        render_context = {k: (v if v and str(v).strip() else "______________________") for k, v in form_data.items()}
+
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as master_zip:
             for root, _, files in os.walk(DOCS_FOLDER):
                 for file in files:
                     if file in selected_docs:
                         src_path = os.path.join(root, file)
+                        doc = DocxTemplate(src_path)
                         
-                        # Process DOCX cleanly in-memory
-                        with zipfile.ZipFile(src_path, 'r') as in_docx:
-                            out_docx_io = io.BytesIO()
-                            with zipfile.ZipFile(out_docx_io, 'w', zipfile.ZIP_DEFLATED) as out_docx:
-                                for item in in_docx.infolist():
-                                    file_content = in_docx.read(item.filename)
-                                    if item.filename in ["word/document.xml", "word/header1.xml", "word/header2.xml", "word/footer1.xml", "word/footer2.xml"]:
-                                        file_content = safe_replace_xml_with_bold(file_content, form_data)
-                                    out_docx.writestr(item, file_content)
-
-                            out_docx_io.seek(0)
-                            master_zip.writestr(f"Word_Files/{file}", out_docx_io.getvalue())
+                        # Native safe Jinja rendering
+                        doc.render(render_context)
+                        
+                        # Save filled DOCX
+                        filled_docx_path = os.path.join(temp_dir, file)
+                        doc.save(filled_docx_path)
+                        
+                        # Add filled DOCX to ZIP
+                        with open(filled_docx_path, 'rb') as f:
+                            master_zip.writestr(f"Word_Files/{file}", f.read())
 
         zip_buffer.seek(0)
         return send_file(
@@ -171,6 +91,8 @@ def generate_complete_zip():
 
     except Exception as e:
         return {"error": str(e)}, 500
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
