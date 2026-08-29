@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LoanAutoDoc Filler ver.-1.1</title>
-    <!-- Local JS Libraries -->
     <script src="static/tailwindcss.js"></script>
     <script src="static/pizzip.js"></script>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 font-sans">
 
-    <!-- Top Header & Branding Banner -->
+    <!-- Top Header -->
     <header class="bg-indigo-700 text-white shadow-lg py-4 px-6">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-
-            <!-- App Name & Credits -->
             <div>
                 <h1 class="text-3xl font-extrabold tracking-wide text-yellow-300">🏦 LoanAutoDoc Filler <span class="text-sm font-normal text-white bg-indigo-900 px-2.5 py-0.5 rounded-full border border-indigo-400">ver.-1.1</span></h1>
                 <p class="text-xs text-indigo-100 mt-1 font-medium">Created & Developed by <span class="font-bold text-yellow-200">SKC</span> (Union Bank of India)</p>
@@ -25,7 +22,6 @@
                 </div>
             </div>
 
-            <!-- WhatsApp Group Feedback QR Code Box -->
             <div class="bg-white/10 p-2.5 rounded-xl border border-indigo-400/30 flex items-center justify-center gap-3.5 backdrop-blur-sm self-center">
                 <div class="w-20 h-20 bg-white rounded-lg p-1 shadow flex items-center justify-center overflow-hidden border shrink-0">
                     <img src="static/qr_code.png" alt="QR Code" class="w-full h-full object-cover block rounded">
@@ -36,15 +32,13 @@
                     <span class="inline-block mt-1 text-[9px] bg-emerald-600 text-white px-2 py-0.5 rounded font-semibold self-start shadow-sm">⚡ Cloud Ready</span>
                 </div>
             </div>
-
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto p-6 space-y-6">
 
-        <!-- Section 1: Top Controls & Scheme Selector -->
+        <!-- Section 1: Controls -->
         <section class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
-
             <div class="flex justify-between items-center border-b pb-3">
                 <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
                     <span>1. Select Scheme & Controls</span>
@@ -54,23 +48,21 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-
-                <!-- Mandatory DP Note & DBC Fixed Controls -->
                 <div class="md:col-span-5 p-3.5 bg-amber-50/80 border border-amber-200 rounded-lg space-y-2.5 text-xs">
                     <div class="border-b border-amber-200 pb-1 flex justify-between items-center">
                         <span class="font-bold text-amber-900 block">📌 Demand Promissory Note (DP Note):</span>
                         <button type="button" onclick="clearDpNoteRadio()" class="text-[10px] text-amber-700 hover:underline font-semibold">Clear</button>
                     </div>
                     <div class="grid grid-cols-1 gap-1">
-                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
+                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
                             <input type="radio" name="dpNoteSelect" value="SD21" onchange="toggleTopControlDoc('SD21', this.checked, 'radio')" class="text-indigo-600">
-                            <span>SD-21 (Fixed Interest Based Loans)</span>
+                            <span>SD-21 (Fixed Interest Loans)</span>
                         </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
+                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
                             <input type="radio" name="dpNoteSelect" value="SD21A" onchange="toggleTopControlDoc('SD21A', this.checked, 'radio')" class="text-indigo-600">
                             <span>SD-21-A (MCLR Linked Loans)</span>
                         </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
+                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
                             <input type="radio" name="dpNoteSelect" value="SD21B" onchange="toggleTopControlDoc('SD21B', this.checked, 'radio')" class="text-indigo-600">
                             <span>SD-21-B (EBLR Linked Loans)</span>
                         </label>
@@ -80,30 +72,28 @@
                         <span class="font-bold text-amber-900 block">📌 Debit Balance Confirmation (DBC):</span>
                     </div>
                     <div class="flex items-center gap-4">
-                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
+                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium">
                             <input type="checkbox" id="dbcSd22" value="SD22" onchange="toggleTopControlDoc('SD22', this.checked, 'checkbox')" class="text-indigo-600 rounded">
                             <span>SD-22 (Simple DBC)</span>
                         </label>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
+                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium">
                             <input type="checkbox" id="dbcSd23" value="SD23" onchange="toggleTopControlDoc('SD23', this.checked, 'checkbox')" class="text-indigo-600 rounded">
                             <span>SD-23 (Composite DBC)</span>
                         </label>
                     </div>
                 </div>
 
-                <!-- Loan Scheme Selector Dropdown -->
                 <div class="md:col-span-7 flex flex-col justify-center space-y-2">
                     <label class="text-xs font-bold text-slate-700 block">🏦 Select Union Bank Facility / Loan Scheme:</label>
                     <select id="loanSchemeDropdown" onchange="applyLoanSchemeFilter()"
-                            class="w-full text-xs p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none font-semibold text-slate-800 bg-slate-50">
+                            class="w-full text-xs p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-800 bg-slate-50">
                         <option value="">-- Manual Selection / Select Scheme to Auto-Check --</option>
                     </select>
-                    <p class="text-[11px] text-slate-400 italic">Selecting a scheme will auto-check required AD/SD agreements and show full interactive preview below.</p>
+                    <p class="text-[11px] text-slate-400 italic">Selecting a scheme auto-checks required agreements and updates preview below.</p>
                 </div>
-
             </div>
 
-            <!-- SCHEME REQUIRED DOCUMENTS PREVIEW BOX (Interactive Clickable Toggle) -->
+            <!-- Interactive Preview Box -->
             <div id="schemePreviewContainer" class="hidden p-4 bg-indigo-50/80 border border-indigo-200 rounded-xl space-y-2 text-xs">
                 <div class="flex justify-between items-center border-b border-indigo-200 pb-2">
                     <h3 id="previewSchemeTitle" class="font-bold text-indigo-900 text-sm flex items-center gap-1.5">
@@ -111,20 +101,17 @@
                     </h3>
                     <span id="previewCountBadge" class="bg-indigo-200 text-indigo-900 font-bold px-2 py-0.5 rounded text-[11px]">0 Documents</span>
                 </div>
-                <div id="schemePreviewList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 pt-1 max-h-48 overflow-y-auto">
-                    <!-- Dynamic Scheme Documents render here -->
-                </div>
+                <div id="schemePreviewList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 pt-1 max-h-48 overflow-y-auto"></div>
                 <p class="text-[10.5px] text-indigo-600 italic pt-1 border-t border-indigo-100">
-                    💡 <strong>Tip:</strong> Click on any document above to select/unselect it directly. Unselected documents will appear grayed out.
+                    💡 Click on any document above to toggle selection directly.
                 </p>
             </div>
-
         </section>
 
-        <!-- Main Workspace: 2-Column Split Layout (Left: Checklist | Right: Data Form) -->
+        <!-- Main Workspace -->
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-            <!-- LEFT COLUMN (col-span-5): Document Selection Checklist -->
+            <!-- Checklist -->
             <div class="lg:col-span-5 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <div>
@@ -134,52 +121,39 @@
                     <span id="fileCountBadge" class="text-xs bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-full border border-indigo-200">0 Selected</span>
                 </div>
 
-                <!-- 4 Categorized Columns -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-
-                    <!-- Col 1: AD Documents -->
                     <div class="border rounded-lg p-2.5 bg-slate-50/50 flex flex-col h-64">
                         <h3 class="font-bold text-indigo-900 border-b pb-1 mb-1.5 flex justify-between items-center">
-                            <span>📄 AD Documents</span>
-                            <span id="countAD" class="text-[10px] bg-indigo-100 text-indigo-800 px-1.5 py-0.2 rounded font-mono">0</span>
+                            <span>📄 AD Documents</span><span id="countAD" class="text-[10px] bg-indigo-100 text-indigo-800 px-1.5 rounded font-mono">0</span>
                         </h3>
                         <div id="colAD" class="overflow-y-auto space-y-1 pr-1 flex-1"></div>
                     </div>
 
-                    <!-- Col 2: SD Main Documents -->
                     <div class="border rounded-lg p-2.5 bg-slate-50/50 flex flex-col h-64">
                         <h3 class="font-bold text-emerald-900 border-b pb-1 mb-1.5 flex justify-between items-center">
-                            <span>📜 SD Documents</span>
-                            <span id="countSD" class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono">0</span>
+                            <span>📜 SD Documents</span><span id="countSD" class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 rounded font-mono">0</span>
                         </h3>
                         <div id="colSD" class="overflow-y-auto space-y-1 pr-1 flex-1"></div>
                     </div>
 
-                    <!-- Col 3: SD Supplementary Docs -->
                     <div class="border rounded-lg p-2.5 bg-slate-50/50 flex flex-col h-64">
                         <h3 class="font-bold text-purple-900 border-b pb-1 mb-1.5 flex justify-between items-center">
-                            <span>📑 Supplementary SD</span>
-                            <span id="countSDS" class="text-[10px] bg-purple-100 text-purple-800 px-1.5 py-0.2 rounded font-mono">0</span>
+                            <span>📑 Supple SD</span><span id="countSDS" class="text-[10px] bg-purple-100 text-purple-800 px-1.5 rounded font-mono">0</span>
                         </h3>
                         <div id="colSDS" class="overflow-y-auto space-y-1 pr-1 flex-1"></div>
                     </div>
 
-                    <!-- Col 4: Other Docs -->
                     <div class="border rounded-lg p-2.5 bg-slate-50/50 flex flex-col h-64">
                         <h3 class="font-bold text-slate-800 border-b pb-1 mb-1.5 flex justify-between items-center">
-                            <span>📁 Other Documents</span>
-                            <span id="countOther" class="text-[10px] bg-slate-200 text-slate-800 px-1.5 py-0.2 rounded font-mono">0</span>
+                            <span>📁 Other Docs</span><span id="countOther" class="text-[10px] bg-slate-200 text-slate-800 px-1.5 rounded font-mono">0</span>
                         </h3>
                         <div id="colOther" class="overflow-y-auto space-y-1 pr-1 flex-1"></div>
                     </div>
-
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN (col-span-7): Fill Borrower Data Form -->
+            <!-- Form -->
             <div class="lg:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-slate-200 min-h-[520px] flex flex-col">
-
-                <!-- Profile Bar & Header -->
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3 mb-4">
                     <div>
                         <div class="flex items-center gap-2">
@@ -187,52 +161,45 @@
                             <span id="placeholderCountBadge" class="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded border border-indigo-200">0 Fields</span>
                         </div>
                         <div class="h-4 flex items-center">
-                            <span id="autoSaveStatus" class="text-[11px] text-emerald-600 font-medium opacity-0 transition-opacity duration-300">
-                                ✓ Data saved locally
-                            </span>
+                            <span id="autoSaveStatus" class="text-[11px] text-emerald-600 font-medium opacity-0 transition-opacity duration-300">✓ Data saved locally</span>
                         </div>
                     </div>
 
-                    <!-- Profile Dropdown Controls -->
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <label class="text-xs font-semibold text-slate-700 whitespace-nowrap">👤 Profile:</label>
-                        <select id="profileDropdown" onchange="loadSelectedProfile()"
-                                class="text-xs p-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none min-w-[160px]">
+                        <label class="text-xs font-semibold text-slate-700">👤 Profile:</label>
+                        <select id="profileDropdown" onchange="loadSelectedProfile()" class="text-xs p-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 min-w-[150px]">
                             <option value="">-- Choose Profile --</option>
                         </select>
-                        <button type="button" onclick="deleteSelectedProfile()" title="Delete selected profile"
-                                class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 py-1.5 rounded-lg font-medium transition">
-                            🗑️
-                        </button>
-                        <button type="button" onclick="clearSavedData()" title="Clear form inputs"
-                                class="text-xs text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 px-2 py-1.5 rounded-lg font-medium transition whitespace-nowrap">
-                            🔄
-                        </button>
+                        <button type="button" onclick="deleteSelectedProfile()" class="text-xs bg-red-50 text-red-600 border border-red-200 px-2 py-1.5 rounded-lg">🗑️</button>
+                        <button type="button" onclick="clearSavedData()" class="text-xs text-slate-600 bg-slate-100 border border-slate-300 px-2 py-1.5 rounded-lg">🔄</button>
                     </div>
                 </div>
 
                 <form id="placeholderForm" onsubmit="generateDocuments(event)" class="flex-1 flex flex-col justify-between space-y-4">
                     <div id="formFieldsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-[440px] overflow-y-auto pr-2">
                         <div class="col-span-2 text-center text-slate-400 py-16 text-xs">
-                            Select documents from Left Checklist or Scheme to generate fill fields.
+                            Select documents to generate fields.
                         </div>
                     </div>
 
                     <div class="pt-3 border-t space-y-2.5">
-                        <!-- Progress status -->
-                        <div id="progressContainer" class="hidden space-y-1 p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                            <div class="flex justify-between text-xs font-semibold text-slate-700">
-                                <span id="progressStatusText">Processing documents & generating ZIP...</span>
-                                <span id="progressPercentage">Working...</span>
+                        
+                        <!-- DYNAMIC PROGRESS BAR & COUNTER -->
+                        <div id="progressContainer" class="hidden space-y-1.5 p-3 bg-indigo-50 border border-indigo-200 rounded-xl">
+                            <div class="flex justify-between text-xs font-bold text-indigo-900">
+                                <span id="progressStatusText">Starting document generation...</span>
+                                <span id="progressPercentage">0%</span>
                             </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                                <div id="progressBar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300 w-0"></div>
+                            </div>
+                            <p class="text-[10px] text-indigo-500 italic text-right" id="progressSubText">Rendering DOCX & High-Quality PDF...</p>
                         </div>
 
-                        <!-- Success Alert Message -->
                         <div id="successMessage" class="hidden p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-700 font-medium flex items-center gap-2">
-                            <span>✅ ZIP Downloaded! It contains both filled <strong>Word (.docx)</strong> and converted <strong>PDF</strong> documents.</span>
+                            <span>✅ Complete Package Downloaded! (Word Files + Aligned PDFs + Combined Booklet).</span>
                         </div>
 
-                        <!-- Submit Button -->
                         <button type="submit" id="downloadBtn" disabled
                                 class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow transition text-center flex justify-center items-center gap-2 text-xs uppercase tracking-wider">
                             <span id="btnText">📥 Generate, Save Profile & Download Complete ZIP</span>
@@ -240,22 +207,20 @@
                     </div>
                 </form>
             </div>
-
         </section>
-
     </main>
 
     <script>
         let loadedFiles = [];
         let activePlaceholdersSet = new Set();
         let saveTimeout = null;
-        let currentSelectedSchemeDocs = []; // Tracks original scheme required docs
+        let currentSelectedSchemeDocs = [];
+        let progressInterval = null;
 
         const STORAGE_KEY = "LoanDocAutoFill_SavedData";
         const PROFILES_KEY = "LoanDocAutoFill_SavedProfiles";
         const COUNTER_KEY = "LoanDocAutoFill_CustomerCounter";
 
-        // Updated Union Bank Fund-Based Schemes Mapping (with AD09 & AD09M Support)
         const SCHEME_DOCUMENTS_MAP = {
             "ADV_FDR": ["AD09", "AD09M", "AD02A", "AD02"],
             "ADV_CUMULATIVE_DEPOSIT": ["AD09", "AD09M", "AD02A", "AD02"],
@@ -292,42 +257,42 @@
         };
 
         const SCHEME_NAMES_DISPLAY = {
-            "-- GENERAL ADVANCES (DEPOSITS & SECURITIES) --": "HEADER",
-            "ADV_FDR": "General Advance - Fixed Deposit Receipt (FDR)",
+            "-- GENERAL ADVANCES --": "HEADER",
+            "ADV_FDR": "General Advance - Fixed Deposit (FDR)",
             "ADV_CUMULATIVE_DEPOSIT": "General Advance - Cumulative Deposit",
-            "ADV_GP_NOTE": "General Advance - Government Promissory Note",
-            "ADV_SHARES": "General Advance - Shares (Physical / Demat)",
-            "ADV_MUTUAL_FUNDS": "General Advance - Units of Mutual Funds",
-            "ADV_NSC": "General Advance - National Savings Certificates (NSC)",
+            "ADV_GP_NOTE": "General Advance - Govt Promissory Note",
+            "ADV_SHARES": "General Advance - Shares (Demat)",
+            "ADV_MUTUAL_FUNDS": "General Advance - Mutual Funds",
+            "ADV_NSC": "General Advance - NSC Certificates",
             "ADV_LIC": "General Advance - L.I.C. Policy",
-            "-- MSME / CORPORATE FUND BASED FACILITIES --": "HEADER",
-            "MSME_TERM_LOAN": "Term Loan (Against Movables / General)",
-            "MSME_CC_STOCKS": "Cash Credit HYP (Against Stocks)",
-            "MSME_CC_BOOKDEBTS": "Cash Credit HYP (Against Book Debts)",
+            "-- MSME FACILITIES --": "HEADER",
+            "MSME_TERM_LOAN": "Term Loan (General / Movables)",
+            "MSME_CC_STOCKS": "Cash Credit (Against Stocks)",
+            "MSME_CC_BOOKDEBTS": "Cash Credit (Against Book Debts)",
             "MSME_CC_SOD_PLEDGE": "Cash Credit / SOD (Pledge)",
-            "MSME_COMPOSITE_LOAN": "Composite Loan (CC, TL, LG, PC)",
+            "MSME_COMPOSITE_LOAN": "Composite Loan (CC, TL, LG)",
             "MSME_SOD_TITLE_DEEDS": "SOD (Against Title Deeds)",
             "MSME_BILLS_PURCHASED": "Bills Purchased / Discounted",
             "MSME_CLEAN_OVERDRAFT": "Clean Overdraft Limit",
             "MSME_SUPPLY_BILLS": "Advance Against Supply Bills",
             "MSME_UNION_RENT": "Union Rent Scheme",
-            "MSME_VEHICLE_SCHEMES": "Union Commercial Vehicle / Parivahan",
+            "MSME_VEHICLE_SCHEMES": "Union Commercial Vehicle",
             "-- RETAIL LOANS --": "HEADER",
-            "RETAIL_UNION_HOME": "Union Home / Smart Save / Awas",
-            "RETAIL_MORTGAGE_PLUS": "Union Mortgage Plus (Existing Home)",
+            "RETAIL_UNION_HOME": "Union Home / Awas",
+            "RETAIL_MORTGAGE_PLUS": "Union Mortgage Plus",
             "RETAIL_UNION_MILES": "Union Miles (Vehicle Loan)",
-            "RETAIL_PERSONAL_SALARIED": "Personal Loan - Salaried Employees",
+            "RETAIL_PERSONAL_SALARIED": "Personal Loan - Salaried",
             "RETAIL_PERSONAL_NON_SALARIED": "Personal Loan - Non-Salaried",
             "RETAIL_PERSONAL_GOVT": "Personal Loan - Govt Employees",
             "RETAIL_UNION_CASH": "Union Cash Scheme",
             "RETAIL_UNION_MORTGAGE": "Union Mortgage Scheme",
             "RETAIL_REVERSE_MORTGAGE": "Union Reverse Mortgage",
             "RETAIL_EDUCATION_LOAN": "Union Education Loan",
-            "-- RURAL & AGRI LOANS --": "HEADER",
+            "-- AGRI LOANS --": "HEADER",
             "AGRI_KCC_GREEN_CARD": "Kisan Credit Card (Union Green Card)",
-            "AGRI_FARM_MECHANISATION": "Farm Mechanisation (Tractors / Equipment)",
-            "AGRI_FARM_DEVELOPMENT": "Farm Development / Irrigation Scheme",
-            "AGRI_GOLD_LOAN": "Gold Loan (Agri / Priority / Non-Priority)"
+            "AGRI_FARM_MECHANISATION": "Farm Mechanisation (Tractors)",
+            "AGRI_FARM_DEVELOPMENT": "Farm Development Scheme",
+            "AGRI_GOLD_LOAN": "Gold Loan (Agri / Priority)"
         };
 
         window.addEventListener('DOMContentLoaded', async () => {
@@ -336,7 +301,6 @@
             await fetchDocumentsFromCloud();
         });
 
-        // AUTO LOAD TEMPLATES FROM SERVER
         async function fetchDocumentsFromCloud() {
             const badge = document.getElementById('loadingDocsBadge');
             const countLabel = document.getElementById('cloudDocsCount');
@@ -345,8 +309,10 @@
                 loadedFiles = await res.json();
                 
                 badge.innerText = "✓ Docs Loaded";
-                badge.classList.remove('bg-indigo-100', 'text-indigo-800', 'border-indigo-300', 'animate-pulse');
-                badge.classList.add('bg-emerald-100', 'text-emerald-800', 'border-emerald-300');
+                badge.classList.replace('bg-indigo-100', 'bg-emerald-100');
+                badge.classList.replace('text-indigo-800', 'text-emerald-800');
+                badge.classList.replace('border-indigo-300', 'border-emerald-300');
+                badge.classList.remove('animate-pulse');
                 countLabel.innerText = `${loadedFiles.length} Templates Ready`;
 
                 renderFileList();
@@ -360,42 +326,26 @@
             const dropdown = document.getElementById('loanSchemeDropdown');
             let optionsHtml = `<option value="">-- Manual Selection / Select Scheme to Auto-Check --</option>`;
             for (let key in SCHEME_NAMES_DISPLAY) {
-                if (SCHEME_NAMES_DISPLAY[key] === "HEADER") {
-                    optionsHtml += `<optgroup label="${key}"></optgroup>`;
-                } else {
-                    optionsHtml += `<option value="${key}">${SCHEME_NAMES_DISPLAY[key]}</option>`;
-                }
+                if (SCHEME_NAMES_DISPLAY[key] === "HEADER") optionsHtml += `<optgroup label="${key}"></optgroup>`;
+                else optionsHtml += `<option value="${key}">${SCHEME_NAMES_DISPLAY[key]}</option>`;
             }
             dropdown.innerHTML = optionsHtml;
         }
 
-        // Strict Exact Code Matching Function
         function isExactCodeMatch(filename, targetCode) {
             if (!filename || !targetCode) return false;
-
             const match = targetCode.trim().match(/^([A-Za-z]+)(\d+)([A-Za-z]*)$/i);
-            if (!match) {
-                return filename.toUpperCase().includes(targetCode.toUpperCase());
-            }
-
+            if (!match) return filename.toUpperCase().includes(targetCode.toUpperCase());
             const [, prefix, num, suffix] = match;
             const numInt = parseInt(num, 10);
-
             let patternStr = `(?:^|[^A-Za-z0-9])${prefix}[\\s_\\-]*0*${numInt}`;
-            if (suffix) {
-                patternStr += `[\\s_\\-]*${suffix}(?![A-Za-z0-9])`;
-            } else {
-                patternStr += `(?![A-Za-z0-9])`;
-            }
-
-            const regex = new RegExp(patternStr, 'i');
-            return regex.test(filename);
+            if (suffix) patternStr += `[\\s_\\-]*${suffix}(?![A-Za-z0-9])`;
+            else patternStr += `(?![A-Za-z0-9])`;
+            return new RegExp(patternStr, 'i').test(filename);
         }
 
-        // Selective Top Control Toggle
         function toggleTopControlDoc(docCode, isChecked, type) {
             if (loadedFiles.length === 0) return;
-
             if (type === 'radio' && isChecked) {
                 const dpCodes = ["SD21", "SD21A", "SD21B"];
                 loadedFiles.forEach(f => {
@@ -405,47 +355,35 @@
                 });
             } else {
                 loadedFiles.forEach(f => {
-                    if (isExactCodeMatch(f.name, docCode)) {
-                        f.checked = isChecked;
-                    }
+                    if (isExactCodeMatch(f.name, docCode)) f.checked = isChecked;
                 });
             }
-
             renderFileList();
             updateFormPlaceholders();
             renderSchemePreview();
         }
 
         function clearDpNoteRadio() {
-            const radios = document.querySelectorAll('input[name="dpNoteSelect"]');
-            radios.forEach(r => r.checked = false);
+            document.querySelectorAll('input[name="dpNoteSelect"]').forEach(r => r.checked = false);
             ["SD21", "SD21A", "SD21B"].forEach(code => toggleTopControlDoc(code, false, 'checkbox'));
         }
 
-        // Sync Top Control UI when checklist checkboxes are toggled
         function syncTopControlsFromList() {
             const sd22Present = loadedFiles.some(f => f.checked && isExactCodeMatch(f.name, 'SD22'));
             const sd23Present = loadedFiles.some(f => f.checked && isExactCodeMatch(f.name, 'SD23'));
-
             document.getElementById('dbcSd22').checked = sd22Present;
             document.getElementById('dbcSd23').checked = sd23Present;
 
-            const dpRadios = document.querySelectorAll('input[name="dpNoteSelect"]');
-            dpRadios.forEach(r => {
+            document.querySelectorAll('input[name="dpNoteSelect"]').forEach(r => {
                 r.checked = loadedFiles.some(f => f.checked && isExactCodeMatch(f.name, r.value));
             });
         }
 
-        // Apply Scheme Filter & Initial Setup
         function applyLoanSchemeFilter() {
             const selectedScheme = document.getElementById('loanSchemeDropdown').value;
-            const previewContainer = document.getElementById('schemePreviewContainer');
-
-            if (loadedFiles.length === 0) return;
-
-            if (!selectedScheme) {
+            if (loadedFiles.length === 0 || !selectedScheme) {
                 currentSelectedSchemeDocs = [];
-                previewContainer.classList.add('hidden');
+                document.getElementById('schemePreviewContainer').classList.add('hidden');
                 return;
             }
 
@@ -453,18 +391,12 @@
             const dbc22 = document.getElementById('dbcSd22').checked;
             const dbc23 = document.getElementById('dbcSd23').checked;
 
-            let requiredDocs = [];
-            if (SCHEME_DOCUMENTS_MAP[selectedScheme]) {
-                requiredDocs = [...SCHEME_DOCUMENTS_MAP[selectedScheme]];
-            }
-
+            let requiredDocs = SCHEME_DOCUMENTS_MAP[selectedScheme] ? [...SCHEME_DOCUMENTS_MAP[selectedScheme]] : [];
             if (dpNoteRadio) requiredDocs.push(dpNoteRadio.value);
             if (dbc22) requiredDocs.push("SD22");
             if (dbc23) requiredDocs.push("SD23");
 
             currentSelectedSchemeDocs = requiredDocs;
-
-            // Auto Check Matched Files in loadedFiles
             loadedFiles.forEach(f => {
                 f.checked = requiredDocs.some(docCode => isExactCodeMatch(f.name, docCode));
             });
@@ -474,7 +406,6 @@
             updateFormPlaceholders();
         }
 
-        // Render Scheme Preview with Clickable Interactive Toggle
         function renderSchemePreview() {
             const selectedScheme = document.getElementById('loanSchemeDropdown').value;
             const previewContainer = document.getElementById('schemePreviewContainer');
@@ -487,11 +418,7 @@
                 return;
             }
 
-            // Find all matching files belonging to this scheme
-            const schemeFiles = loadedFiles.filter(f =>
-                currentSelectedSchemeDocs.some(docCode => isExactCodeMatch(f.name, docCode))
-            );
-
+            const schemeFiles = loadedFiles.filter(f => currentSelectedSchemeDocs.some(docCode => isExactCodeMatch(f.name, docCode)));
             const activeFiles = schemeFiles.filter(f => f.checked);
             previewTitle.innerHTML = `📋 Scheme Preview: <span class="text-indigo-700">${SCHEME_NAMES_DISPLAY[selectedScheme] || selectedScheme}</span>`;
             previewBadge.innerText = `${activeFiles.length}/${schemeFiles.length} Active`;
@@ -500,21 +427,18 @@
             schemeFiles.forEach(f => {
                 const fileIdx = loadedFiles.indexOf(f);
                 const isChecked = f.checked;
-
                 previewHtml += `
-                <div onclick="togglePreviewDoc(${fileIdx})"
-                     title="Click to ${isChecked ? 'Unselect' : 'Select'} ${f.name}"
-                     class="flex items-center gap-1.5 p-2 bg-white border ${isChecked ? 'border-indigo-300 shadow-2xs hover:bg-indigo-50/50' : 'border-slate-200 bg-slate-100/70 opacity-60 hover:opacity-100 hover:bg-slate-100'} rounded-lg cursor-pointer transition select-none">
+                <div onclick="togglePreviewDoc(${fileIdx})" title="Click to ${isChecked ? 'Unselect' : 'Select'} ${f.name}"
+                     class="flex items-center gap-1.5 p-2 bg-white border ${isChecked ? 'border-indigo-300 shadow-2xs hover:bg-indigo-50/50' : 'border-slate-200 bg-slate-100/70 opacity-60 hover:opacity-100'} rounded-lg cursor-pointer transition select-none">
                     <span class="${isChecked ? 'text-emerald-600 font-bold' : 'text-slate-400 font-bold'} text-xs">${isChecked ? '✓' : '✕'}</span>
                     <span class="font-medium text-[11px] ${isChecked ? 'text-slate-800' : 'text-slate-500 line-through'} truncate">${f.name}</span>
                 </div>`;
             });
 
-            previewList.innerHTML = previewHtml || `<p class="text-slate-400 italic text-xs col-span-3">No matching files found in server folder.</p>`;
+            previewList.innerHTML = previewHtml || `<p class="text-slate-400 italic text-xs col-span-3">No matching files found.</p>`;
             previewContainer.classList.remove('hidden');
         }
 
-        // Click Handler for Preview Document Cards
         function togglePreviewDoc(index) {
             if (loadedFiles[index]) {
                 loadedFiles[index].checked = !loadedFiles[index].checked;
@@ -524,7 +448,6 @@
             }
         }
 
-        // Render 4 Categorized Columns
         function renderFileList() {
             const colAD = document.getElementById('colAD');
             const colSD = document.getElementById('colSD');
@@ -537,30 +460,19 @@
             loadedFiles.forEach((f, idx) => {
                 const cleanName = f.name.toUpperCase();
                 const isChecked = f.checked;
-
-                let displayName = f.name;
-                if (displayName.length > 20) {
-                    displayName = displayName.substring(0, 17) + '...';
-                }
+                let displayName = f.name.length > 20 ? f.name.substring(0, 17) + '...' : f.name;
 
                 const itemHtml = `
                 <label class="flex items-center gap-1.5 p-1 rounded hover:bg-slate-100 border ${isChecked ? 'border-indigo-200 bg-indigo-50/60 font-semibold' : 'border-transparent'} cursor-pointer" title="${f.name}">
-                    <input type="checkbox" value="${idx}" ${isChecked ? 'checked' : ''} onchange="toggleFileCheckbox(${idx}, this.checked)"
-                           class="doc-checkbox text-indigo-600 rounded focus:ring-indigo-500 scale-90">
-                    <span class="truncate text-[10.5px] text-slate-700 leading-tight">${displayName}</span>
+                    <input type="checkbox" value="${idx}" ${isChecked ? 'checked' : ''} onchange="toggleFileCheckbox(${idx}, this.checked)" class="doc-checkbox text-indigo-600 rounded scale-90">
+                    <span class="truncate text-[10.5px] text-slate-700">${displayName}</span>
                 </label>`;
 
-                if (f.categoryFolder === 'OtherDocs') {
-                    otherHtml += itemHtml; countOther++;
-                } else if (cleanName.includes('SD') && (cleanName.includes('SUPPLE') || cleanName.includes('SD03S') || cleanName.includes('SD-03S'))) {
-                    sdsHtml += itemHtml; countSDS++;
-                } else if (cleanName.startsWith('SD') || cleanName.includes('SD')) {
-                    sdHtml += itemHtml; countSD++;
-                } else if (cleanName.startsWith('AD') || cleanName.includes('AD')) {
-                    adHtml += itemHtml; countAD++;
-                } else {
-                    otherHtml += itemHtml; countOther++;
-                }
+                if (f.categoryFolder === 'OtherDocs') { otherHtml += itemHtml; countOther++; }
+                else if (cleanName.includes('SD') && (cleanName.includes('SUPPLE') || cleanName.includes('SD03S') || cleanName.includes('SD-03S'))) { sdsHtml += itemHtml; countSDS++; }
+                else if (cleanName.startsWith('SD') || cleanName.includes('SD')) { sdHtml += itemHtml; countSD++; }
+                else if (cleanName.startsWith('AD') || cleanName.includes('AD')) { adHtml += itemHtml; countAD++; }
+                else { otherHtml += itemHtml; countOther++; }
             });
 
             colAD.innerHTML = adHtml || `<p class="text-slate-400 italic text-[10px]">No AD docs.</p>`;
@@ -580,12 +492,9 @@
         }
 
         function toggleFileCheckbox(index, isChecked) {
-            if (loadedFiles[index]) {
-                loadedFiles[index].checked = isChecked;
-            }
+            if (loadedFiles[index]) loadedFiles[index].checked = isChecked;
             const activeCount = loadedFiles.filter(f => f.checked).length;
             document.getElementById('fileCountBadge').innerText = `${activeCount}/${loadedFiles.length} Selected`;
-
             updateFormPlaceholders();
             renderFileList();
             renderSchemePreview();
@@ -594,9 +503,7 @@
         function updateFormPlaceholders() {
             activePlaceholdersSet.clear();
             loadedFiles.forEach(f => {
-                if (f.checked) {
-                    f.placeholders.forEach(ph => activePlaceholdersSet.add(ph));
-                }
+                if (f.checked) f.placeholders.forEach(ph => activePlaceholdersSet.add(ph));
             });
             renderFormFields(Array.from(activePlaceholdersSet).sort());
         }
@@ -613,32 +520,26 @@
             }
 
             const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-
-            container.innerHTML = placeholders.map(ph => {
-                return `
+            container.innerHTML = placeholders.map(ph => `
                 <div class="space-y-1">
-                    <label class="text-[10.5px] font-bold text-slate-600 block uppercase tracking-wider">
-                        ${ph.replace(/_/g, ' ')}
-                    </label>
+                    <label class="text-[10.5px] font-bold text-slate-600 block uppercase tracking-wider">${ph.replace(/_/g, ' ')}</label>
                     <input type="text" data-key="${ph}" value="${savedData[ph] || ''}" placeholder="Enter ${ph}"
                            oninput="saveFieldData()"
-                           class="ph-input w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>`;
-            }).join('');
+                           class="ph-input w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>`).join('');
 
             downloadBtn.disabled = false;
         }
 
         function saveFieldData() {
             const formData = {};
-            document.querySelectorAll('.ph-input').forEach(input => { formData[input.dataset.key] = input.value; });
+            document.querySelectorAll('.ph-input').forEach(input => formData[input.dataset.key] = input.value);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
-
             const status = document.getElementById('autoSaveStatus');
             status.classList.remove('opacity-0');
             status.classList.add('opacity-100');
             if (saveTimeout) clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => { status.classList.remove('opacity-100'); status.classList.add('opacity-0'); }, 1200);
+            saveTimeout = setTimeout(() => status.classList.replace('opacity-100', 'opacity-0'), 1200);
         }
 
         function renderProfilesDropdown() {
@@ -653,11 +554,9 @@
             const selectedName = document.getElementById('profileDropdown').value;
             const profiles = JSON.parse(localStorage.getItem(PROFILES_KEY) || '{}');
             if (!selectedName || !profiles[selectedName]) return;
-
             const profileData = profiles[selectedName];
             document.querySelectorAll('.ph-input').forEach(input => {
-                const key = input.dataset.key;
-                if (profileData[key] !== undefined) input.value = profileData[key];
+                if (profileData[input.dataset.key] !== undefined) input.value = profileData[input.dataset.key];
             });
             saveFieldData();
         }
@@ -676,12 +575,50 @@
         function clearSavedData() {
             if (confirm("Clear all form inputs?")) {
                 localStorage.removeItem(STORAGE_KEY);
-                document.querySelectorAll('.ph-input').forEach(input => { input.value = ''; });
+                document.querySelectorAll('.ph-input').forEach(input => input.value = '');
                 document.getElementById('profileDropdown').value = '';
             }
         }
 
-        // GENERATE & DOWNLOAD COMPLETE ZIP (DOCX + PDF) VIA CLOUD BACKEND
+        // SMOOTH PROGRESS BAR ANIMATOR
+        function startProgressBarAnimation() {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressPct = document.getElementById('progressPercentage');
+            const progressStatus = document.getElementById('progressStatusText');
+
+            progressContainer.classList.remove('hidden');
+            let currentPct = 0;
+            progressBar.style.width = '0%';
+            progressPct.innerText = '0%';
+
+            progressInterval = setInterval(() => {
+                if (currentPct < 90) {
+                    currentPct += Math.floor(Math.random() * 8) + 4;
+                    if (currentPct > 90) currentPct = 90;
+
+                    progressBar.style.width = `${currentPct}%`;
+                    progressPct.innerText = `${currentPct}%`;
+
+                    if (currentPct < 30) progressStatus.innerText = "1/3 Filling Word placeholders...";
+                    else if (currentPct < 70) progressStatus.innerText = "2/3 Converting DOCX to aligned PDF...";
+                    else progressStatus.innerText = "3/3 Merging All-In-One Booklet & Packing ZIP...";
+                }
+            }, 350);
+        }
+
+        function completeProgressBarAnimation() {
+            clearInterval(progressInterval);
+            const progressBar = document.getElementById('progressBar');
+            const progressPct = document.getElementById('progressPercentage');
+            const progressStatus = document.getElementById('progressStatusText');
+
+            progressBar.style.width = '100%';
+            progressPct.innerText = '100%';
+            progressStatus.innerText = 'Done! Starting Download...';
+        }
+
+        // SUBMIT & GENERATE ZIP
         async function generateDocuments(e) {
             e.preventDefault();
 
@@ -694,9 +631,10 @@
             if (selectedFilesList.length === 0) return alert("Please select at least one document checkbox.");
 
             downloadBtn.disabled = true;
-            btnText.innerText = "⏳ Processing DOCX & PDF...";
-            progressContainer.classList.remove('hidden');
+            btnText.innerText = "⏳ Processing Package...";
             successMessage.classList.add('hidden');
+
+            startProgressBarAnimation();
 
             const formData = {};
             let borrowerVal = "";
@@ -705,7 +643,6 @@
                 const key = input.dataset.key;
                 const val = input.value.trim();
                 formData[key] = val;
-
                 if (!borrowerVal && (key.toUpperCase().includes('BORROWER_NAME') || key.toUpperCase() === 'BORROWER')) {
                     borrowerVal = val;
                 }
@@ -719,10 +656,6 @@
 
             const profiles = JSON.parse(localStorage.getItem(PROFILES_KEY) || '{}');
             profiles[borrowerVal.toUpperCase()] = formData;
-
-            const keys = Object.keys(profiles);
-            if (keys.length > 50) delete profiles[keys[0]];
-
             localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
             renderProfilesDropdown();
 
@@ -737,6 +670,8 @@
                 });
 
                 if (!response.ok) throw new Error("ZIP generation failed on server.");
+
+                completeProgressBarAnimation();
 
                 const blob = await response.blob();
                 const safeName = borrowerVal.replace(/[^A-Za-z0-9_]/g, '_');
@@ -755,6 +690,7 @@
                 successMessage.classList.remove('hidden');
 
             } catch (err) {
+                clearInterval(progressInterval);
                 alert("Download Error: " + err.message);
             } finally {
                 downloadBtn.disabled = false;
