@@ -5,29 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LoanAutoDoc Filler ver.-1.1</title>
     <script src="static/tailwindcss.js"></script>
-    <script src="static/pizzip.js"></script>
-    <style>
-        @keyframes pulse-glow {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
-            }
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 0 0 12px rgba(79, 70, 229, 0);
-            }
-        }
-        .btn-pulse {
-            animation: pulse-glow 1.8s infinite;
-        }
-    </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 font-sans">
 
+    <!-- Top Header & Branding Banner -->
     <header class="bg-indigo-700 text-white shadow-lg py-4 px-6">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <h1 class="text-3xl font-extrabold tracking-wide text-yellow-300">🏦 LoanAutoDoc Filler <span class="text-sm font-normal text-white bg-indigo-900 px-2.5 py-0.5 rounded-full border border-indigo-400">ver.-1.1 (PDF Engine)</span></h1>
+                <h1 class="text-3xl font-extrabold tracking-wide text-yellow-300">🏦 LoanAutoDoc Filler <span class="text-sm font-normal text-white bg-indigo-900 px-2.5 py-0.5 rounded-full border border-indigo-400">ver.-1.1 Cloud</span></h1>
                 <p class="text-xs text-indigo-100 mt-1 font-medium">Created & Developed by <span class="font-bold text-yellow-200">SKC</span> (Union Bank of India)</p>
                 <div class="flex flex-wrap items-center gap-3 text-xs mt-1.5 text-indigo-200">
                     <span>📱 <strong>9807689654</strong></span>
@@ -43,7 +28,7 @@
                 <div class="text-left flex flex-col justify-center">
                     <p class="text-xs font-bold text-yellow-300 leading-tight">💬 Feedback & Support</p>
                     <p class="text-[10px] text-indigo-100 leading-tight mt-0.5">Scan QR Code to join<br>WhatsApp Group</p>
-                    <span class="inline-block mt-1 text-[9px] bg-emerald-600 text-white px-2 py-0.5 rounded font-semibold self-start shadow-sm">📄 Single PDF Mode</span>
+                    <span class="inline-block mt-1 text-[9px] bg-emerald-600 text-white px-2 py-0.5 rounded font-semibold self-start shadow-sm">⚡ Auto Cloud Sync</span>
                 </div>
             </div>
         </div>
@@ -51,42 +36,33 @@
 
     <main class="max-w-7xl mx-auto p-6 space-y-6">
 
+        <!-- Section 1: Top Scheme & Controls -->
         <section class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <span>1. Select Master 'Docs' Folder & Scheme</span>
-                        <span id="folderLoadedBadge" class="hidden text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full border border-emerald-300">✓ Docs Loaded</span>
-                    </h2>
-                    <p class="text-xs text-slate-500">First load your main 'Docs' folder to extract fields and select schemes.</p>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <input type="file" id="masterFolderInput" webkitdirectory directory multiple onchange="handleDocsFolderSelect(event)" class="hidden">
-                    <button id="folderSelectBtn" onclick="document.getElementById('masterFolderInput').click()"
-                            class="btn-pulse bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-lg text-xs transition flex items-center gap-2 shadow-lg border-2 border-indigo-400">
-                        <span class="text-base">📁</span> <span>SELECT 'DOCS' FOLDER FIRST</span>
-                    </button>
-                </div>
+            <div class="flex justify-between items-center border-b pb-3">
+                <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <span>1. Select Scheme & Controls</span>
+                    <span id="loadingDocsBadge" class="text-xs bg-indigo-100 text-indigo-800 font-bold px-2.5 py-0.5 rounded-full border border-indigo-300 animate-pulse">Loading Docs...</span>
+                </h2>
+                <span id="cloudDocsCount" class="text-xs font-semibold text-slate-500">0 Templates Loaded</span>
             </div>
 
-            <div id="controlsSubContainer" class="grid grid-cols-1 md:grid-cols-12 gap-4 opacity-50 pointer-events-none transition-opacity duration-300">
-
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <!-- DP Note & DBC Fixed Controls -->
                 <div class="md:col-span-5 p-3.5 bg-amber-50/80 border border-amber-200 rounded-lg space-y-2.5 text-xs">
                     <div class="border-b border-amber-200 pb-1 flex justify-between items-center">
                         <span class="font-bold text-amber-900 block">📌 Demand Promissory Note (DP Note):</span>
                         <button type="button" onclick="clearDpNoteRadio()" class="text-[10px] text-amber-700 hover:underline font-semibold">Clear</button>
                     </div>
                     <div class="grid grid-cols-1 gap-1">
-                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
+                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
                             <input type="radio" name="dpNoteSelect" value="SD21" onchange="toggleTopControlDoc('SD21', this.checked, 'radio')" class="text-indigo-600">
-                            <span>SD-21 (Fixed Interest Loans)</span>
+                            <span>SD-21 (Fixed Interest Based Loans)</span>
                         </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
+                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
                             <input type="radio" name="dpNoteSelect" value="SD21A" onchange="toggleTopControlDoc('SD21A', this.checked, 'radio')" class="text-indigo-600">
                             <span>SD-21-A (MCLR Linked Loans)</span>
                         </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
+                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
                             <input type="radio" name="dpNoteSelect" value="SD21B" onchange="toggleTopControlDoc('SD21B', this.checked, 'radio')" class="text-indigo-600">
                             <span>SD-21-B (EBLR Linked Loans)</span>
                         </label>
@@ -96,45 +72,38 @@
                         <span class="font-bold text-amber-900 block">📌 Debit Balance Confirmation (DBC):</span>
                     </div>
                     <div class="flex items-center gap-4">
-                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
+                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium">
                             <input type="checkbox" id="dbcSd22" value="SD22" onchange="toggleTopControlDoc('SD22', this.checked, 'checkbox')" class="text-indigo-600 rounded">
                             <span>SD-22 (Simple DBC)</span>
                         </label>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
+                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium">
                             <input type="checkbox" id="dbcSd23" value="SD23" onchange="toggleTopControlDoc('SD23', this.checked, 'checkbox')" class="text-indigo-600 rounded">
                             <span>SD-23 (Composite DBC)</span>
                         </label>
                     </div>
                 </div>
 
+                <!-- Scheme Dropdown -->
                 <div class="md:col-span-7 flex flex-col justify-center space-y-2">
                     <label class="text-xs font-bold text-slate-700 block">🏦 Select Union Bank Facility / Loan Scheme:</label>
                     <select id="loanSchemeDropdown" onchange="applyLoanSchemeFilter()"
                             class="w-full text-xs p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-800 bg-slate-50">
                         <option value="">-- Manual Selection / Select Scheme to Auto-Check --</option>
                     </select>
-                    <p class="text-[11px] text-slate-400 italic">Selecting a scheme auto-checks required documents to be merged in final PDF.</p>
-                </div>
-            </div>
-
-            <div id="scanProgressContainer" class="hidden space-y-1.5 p-3 bg-indigo-50/70 border border-indigo-100 rounded-lg">
-                <div class="flex justify-between text-xs font-semibold text-indigo-700">
-                    <span id="scanStatusText">Scanning template(s)...</span>
-                    <span id="scanPercentage">0%</span>
-                </div>
-                <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                    <div id="scanProgressBar" class="bg-indigo-600 h-2 rounded-full transition-all duration-150 w-0"></div>
+                    <p class="text-[11px] text-slate-400 italic">Selecting a scheme auto-checks required agreements and prepares input fields instantly.</p>
                 </div>
             </div>
         </section>
 
-        <section id="mainWorkspaceSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start opacity-40 pointer-events-none transition-opacity duration-300">
+        <!-- Main Workspace: Split Layout -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
+            <!-- LEFT COLUMN: Document Selection Checklist -->
             <div class="lg:col-span-5 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <div>
                         <h2 class="text-base font-bold text-slate-800">2. Document Selection Checklist</h2>
-                        <p class="text-[11px] text-slate-500">Selected files will be merged in single PDF.</p>
+                        <p class="text-[11px] text-slate-500">Check/Uncheck documents as needed.</p>
                     </div>
                     <span id="fileCountBadge" class="text-xs bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-full border border-indigo-200">0 Selected</span>
                 </div>
@@ -167,6 +136,7 @@
                 </div>
             </div>
 
+            <!-- RIGHT COLUMN: Fill Borrower Data Form -->
             <div class="lg:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-slate-200 min-h-[520px] flex flex-col">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3 mb-4">
                     <div>
@@ -189,28 +159,28 @@
                     </div>
                 </div>
 
-                <form id="placeholderForm" onsubmit="generateMergedPDF(event)" class="flex-1 flex flex-col justify-between space-y-4">
+                <form id="placeholderForm" onsubmit="generateDocumentsZip(event)" class="flex-1 flex flex-col justify-between space-y-4">
                     <div id="formFieldsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-[440px] overflow-y-auto pr-2">
                         <div class="col-span-2 text-center text-slate-400 py-16 text-xs">
-                            Select documents from checklist to load fields.
+                            Select documents from Left Checklist to generate fill fields.
                         </div>
                     </div>
 
                     <div class="pt-3 border-t space-y-2.5">
                         <div id="progressContainer" class="hidden space-y-1 p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
                             <div class="flex justify-between text-xs font-semibold text-slate-700">
-                                <span id="progressStatusText">Converting & Merging PDFs...</span>
+                                <span id="progressStatusText">Generating Word Docs & Converting to PDF...</span>
                                 <span id="progressPercentage">Processing</span>
                             </div>
                         </div>
 
                         <div id="successMessage" class="hidden p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-700 font-medium flex items-center gap-2">
-                            <span>✅ All documents successfully filled & merged into Single PDF!</span>
+                            <span>✅ ZIP Downloaded! It contains both filled <strong>Word (.docx)</strong> and converted <strong>PDF</strong> files.</span>
                         </div>
 
                         <button type="submit" id="downloadBtn" disabled
-                                class="w-full bg-red-600 hover:bg-red-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow transition text-center flex justify-center items-center gap-2 text-xs uppercase tracking-wider">
-                            <span id="btnText">📑 Generate & Download Single Merged PDF</span>
+                                class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow transition text-center flex justify-center items-center gap-2 text-xs uppercase tracking-wider">
+                            <span id="btnText">📥 Generate & Download Complete Package (.ZIP)</span>
                         </button>
                     </div>
                 </form>
@@ -222,7 +192,6 @@
         let loadedFiles = [];
         let activePlaceholdersSet = new Set();
         let saveTimeout = null;
-        let currentSelectedSchemeDocs = [];
 
         const STORAGE_KEY = "LoanDocAutoFill_SavedData";
         const PROFILES_KEY = "LoanDocAutoFill_SavedProfiles";
@@ -302,10 +271,31 @@
             "AGRI_GOLD_LOAN": "Gold Loan (Agri / Priority)"
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             renderProfilesDropdown();
             populateSchemeDropdown();
+            await fetchDocumentsFromCloud();
         });
+
+        // AUTO FETCH TEMPLATES ON LOAD
+        async function fetchDocumentsFromCloud() {
+            const badge = document.getElementById('loadingDocsBadge');
+            const countLabel = document.getElementById('cloudDocsCount');
+            try {
+                const res = await fetch('/api/get-docs');
+                loadedFiles = await res.json();
+                
+                badge.innerText = "✓ Docs Active";
+                badge.classList.remove('bg-indigo-100', 'text-indigo-800', 'border-indigo-300', 'animate-pulse');
+                badge.classList.add('bg-emerald-100', 'text-emerald-800', 'border-emerald-300');
+                countLabel.innerText = `${loadedFiles.length} Templates Ready`;
+
+                renderFileList();
+            } catch (err) {
+                badge.innerText = "✕ Error Loading Docs";
+                badge.classList.add('bg-red-100', 'text-red-800');
+            }
+        }
 
         function populateSchemeDropdown() {
             const dropdown = document.getElementById('loanSchemeDropdown');
@@ -330,71 +320,6 @@
             if (suffix) patternStr += `[\\s_\\-]*${suffix}(?![A-Za-z0-9])`;
             else patternStr += `(?![A-Za-z0-9])`;
             return new RegExp(patternStr, 'i').test(filename);
-        }
-
-        function activateWorkspaceUI() {
-            document.getElementById('folderSelectBtn').classList.remove('btn-pulse', 'bg-indigo-600');
-            document.getElementById('folderSelectBtn').classList.add('bg-emerald-600');
-            document.getElementById('folderSelectBtn').innerHTML = `<span>📁</span> <span>RE-SELECT 'DOCS' FOLDER</span>`;
-            document.getElementById('controlsSubContainer').classList.remove('opacity-50', 'pointer-events-none');
-            document.getElementById('mainWorkspaceSection').classList.remove('opacity-40', 'pointer-events-none');
-            document.getElementById('folderLoadedBadge').classList.remove('hidden');
-        }
-
-        async function handleDocsFolderSelect(event) {
-            const files = Array.from(event.target.files).filter(f => f.name.endsWith('.docx') && !f.name.startsWith('~$'));
-            if (files.length === 0) return alert("No valid Word (.docx) files found.");
-
-            const scanContainer = document.getElementById('scanProgressContainer');
-            scanContainer.classList.remove('hidden');
-            loadedFiles = [];
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const relPath = file.webkitRelativePath || file.name;
-                const categoryFolder = relPath.includes('OtherDocs') ? 'OtherDocs' : 'SecurityDocs';
-                const placeholders = await extractPlaceholdersFromFile(file);
-
-                loadedFiles.push({
-                    name: file.name,
-                    categoryFolder: categoryFolder,
-                    placeholders: placeholders,
-                    checked: false
-                });
-            }
-
-            activateWorkspaceUI();
-            renderFileList();
-            updateFormPlaceholders();
-            event.target.value = '';
-            setTimeout(() => scanContainer.classList.add('hidden'), 500);
-        }
-
-        function extractPlaceholdersFromFile(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const zip = new PizZip(e.target.result);
-                        let extractedText = "";
-                        for (let fileName in zip.files) {
-                            if (fileName.startsWith("word/") && fileName.endsWith(".xml")) {
-                                extractedText += " " + zip.files[fileName].asText().replace(/<[^>]+>/g, '');
-                            }
-                        }
-                        const regex = /\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g;
-                        const placeholders = new Set();
-                        let match;
-                        while ((match = regex.exec(extractedText)) !== null) {
-                            if (match[1]) placeholders.add(match[1].trim());
-                        }
-                        resolve(Array.from(placeholders));
-                    } catch (err) {
-                        resolve([]);
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            });
         }
 
         function renderFileList() {
@@ -506,7 +431,7 @@
             document.getElementById('placeholderCountBadge').innerText = `${placeholders.length} Fields`;
 
             if (placeholders.length === 0) {
-                container.innerHTML = `<div class="col-span-2 text-center text-slate-400 py-16 text-xs">Select documents from checklist to generate fill fields.</div>`;
+                container.innerHTML = `<div class="col-span-2 text-center text-slate-400 py-16 text-xs">Select documents from Left Checklist to generate fill fields.</div>`;
                 downloadBtn.disabled = true;
                 return;
             }
@@ -572,8 +497,8 @@
             }
         }
 
-        // BACKEND CALL: Generate Single Merged PDF
-        async function generateMergedPDF(e) {
+        // GENERATE & DOWNLOAD COMPLETE ZIP (DOCX + PDF)
+        async function generateDocumentsZip(e) {
             e.preventDefault();
             const downloadBtn = document.getElementById('downloadBtn');
             const btnText = document.getElementById('btnText');
@@ -584,7 +509,7 @@
             if (selectedFilesList.length === 0) return alert("Please select at least one document.");
 
             downloadBtn.disabled = true;
-            btnText.innerText = "⏳ Generating Single Merged PDF...";
+            btnText.innerText = "⏳ Processing DOCX & PDF...";
             progressContainer.classList.remove('hidden');
             successMessage.classList.add('hidden');
 
@@ -605,14 +530,13 @@
                 localStorage.setItem(COUNTER_KEY, (count + 1).toString());
             }
 
-            // Save profile
             const profiles = JSON.parse(localStorage.getItem(PROFILES_KEY) || '{}');
             profiles[borrowerVal.toUpperCase()] = formData;
             localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
             renderProfilesDropdown();
 
             try {
-                const response = await fetch('/generate-merged-pdf', {
+                const response = await fetch('/generate-complete-zip', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -621,13 +545,13 @@
                     })
                 });
 
-                if (!response.ok) throw new Error("Server failed to generate merged PDF.");
+                if (!response.ok) throw new Error("ZIP generation failed.");
 
                 const blob = await response.blob();
                 const safeName = borrowerVal.replace(/[^A-Za-z0-9_]/g, '_');
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = `Loan_Set_${safeName}.pdf`;
+                link.download = `Loan_Package_${safeName}.zip`;
                 document.body.appendChild(link);
                 link.click();
 
@@ -639,10 +563,10 @@
                 successMessage.classList.remove('hidden');
 
             } catch (err) {
-                alert("Generation Error: " + err.message);
+                alert("Error: " + err.message);
             } finally {
                 downloadBtn.disabled = false;
-                btnText.innerText = "📑 Generate & Download Single Merged PDF";
+                btnText.innerText = "📥 Generate & Download Complete Package (.ZIP)";
                 setTimeout(() => progressContainer.classList.add('hidden'), 2500);
             }
         }
