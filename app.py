@@ -1,26 +1,73 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, jsonify, send_file
 import os
 import io
+import re
 import shutil
 import tempfile
+import zipfile
 from docxtpl import DocxTemplate
-from pypdf import PdfMerger
-# Windows local & cloud converter support
-try:
-    from docx2pdf import convert
-except ImportError:
-    convert = None
+
+# Linux & Cloud Server PDF conversion support (LibreOffice)
+import subprocess
 
 app = Flask(__name__)
 
 DOCS_FOLDER = os.path.join(os.path.dirname(__file__), 'Docs')
 
+def extract_placeholders(docx_path):
+    try:
+        with zipfile.ZipFile(docx_path, 'r') as z:
+            xml_content = z.read('word/document.xml').decode('utf-8')
+            clean_text = re.sub(r'<[^>]+>', '', xml_content)
+            matches = re.findall(r'\{\{\s*([A-Za-z0-9_]+)\s*\}\}', clean_text)
+            return list(set(matches))
+    except Exception:
+        return []
+
+def convert_to_pdf(doc_path, output_dir):
+    try:
+        # Cloud/Linux Server LibreOffice converter
+        subprocess.run([
+            'libreoffice', '--headless', '--convert-to', 'pdf',
+            doc_path, '--outdir', output_dir
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+    except Exception:
+        # Fallback for Windows Local Environment
+        try:
+            from docx2pdf import convert
+            pdf_path = os.path.join(output_dir, os.path.basename(doc_path).replace('.docx', '.pdf'))
+            convert(doc_path, pdf_path)
+        except Exception:
+            pass
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
-@app.route('/generate-merged-pdf', methods=['POST'])
-def generate_merged_pdf():
+# API: Auto load docs and placeholders directly on page open
+@app.route('/api/get-docs', methods=['GET'])
+def get_docs():
+    files_list = []
+    if os.path.exists(DOCS_FOLDER):
+        for root, _, files in os.walk(DOCS_FOLDER):
+            for file in sorted(files):
+                if file.endswith('.docx') and not file.startswith('~$'):
+                    full_path = os.path.join(root, file)
+                    rel_dir = os.path.relpath(root, DOCS_FOLDER)
+                    category = 'OtherDocs' if 'OtherDocs' in rel_dir else 'SecurityDocs'
+                    placeholders = extract_placeholders(full_path)
+                    
+                    files_list.append({
+                        "name": file,
+                        "categoryFolder": category,
+                        "placeholders": placeholders,
+                        "checked": False
+                    })
+    return jsonify(files_list)
+
+# API: Generate DOCX + PDF in ZIP
+@app.route('/generate-complete-zip', methods=['POST'])
+def generate_complete_zip():
     data = request.json
     form_data = data.get('formData', {})
     selected_docs = data.get('selectedDocs', [])
@@ -29,52 +76,43 @@ def generate_merged_pdf():
         borrower_name = 'Customer'
 
     temp_dir = tempfile.mkdtemp()
-    merger = PdfMerger()
+    zip_buffer = io.BytesIO()
 
     try:
-        pdf_paths = []
-        
-        # 1. Scan and fill matched documents
-        for root, _, files in os.walk(DOCS_FOLDER):
-            for file in sorted(files):
-                if file.endswith('.docx') and not file.startswith('~$'):
-                    file_upper = file.upper()
-                    # Check if document code is matched in selectedDocs
-                    if any(doc_code.upper() in file_upper for doc_code in selected_docs):
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as master_zip:
+            for root, _, files in os.walk(DOCS_FOLDER):
+                for file in files:
+                    if file in selected_docs:
                         src_path = os.path.join(root, file)
                         doc = DocxTemplate(src_path)
                         
-                        # Replace placeholders (Blank lines for empty fields)
+                        # Replace placeholders (Blank lines for empty inputs)
                         render_context = {k: (v if v else "______________________") for k, v in form_data.items()}
                         doc.render(render_context)
                         
+                        # Save filled DOCX
                         filled_docx_path = os.path.join(temp_dir, file)
                         doc.save(filled_docx_path)
                         
-                        # Convert to PDF
-                        pdf_file_name = file.replace('.docx', '.pdf')
-                        pdf_path = os.path.join(temp_dir, pdf_file_name)
+                        # Add filled DOCX to ZIP
+                        with open(filled_docx_path, 'rb') as f:
+                            master_zip.writestr(f"Word_Files/{file}", f.read())
                         
-                        # Convert using docx2pdf
-                        convert(filled_docx_path, pdf_path)
+                        # Convert to PDF & Add to ZIP
+                        convert_to_pdf(filled_docx_path, temp_dir)
+                        pdf_name = file.replace('.docx', '.pdf')
+                        pdf_path = os.path.join(temp_dir, pdf_name)
                         
                         if os.path.exists(pdf_path):
-                            pdf_paths.append(pdf_path)
+                            with open(pdf_path, 'rb') as pf:
+                                master_zip.writestr(f"PDF_Files/{pdf_name}", pf.read())
 
-        # 2. Merge all individual PDFs into Single PDF
-        for p in pdf_paths:
-            merger.append(p)
-
-        merged_pdf_io = io.BytesIO()
-        merger.write(merged_pdf_io)
-        merger.close()
-        merged_pdf_io.seek(0)
-
+        zip_buffer.seek(0)
         return send_file(
-            merged_pdf_io,
-            mimetype='application/pdf',
+            zip_buffer,
+            mimetype='application/zip',
             as_attachment=True,
-            download_name=f'Loan_Set_{borrower_name}.pdf'
+            download_name=f'Loan_Package_{borrower_name}.zip'
         )
 
     except Exception as e:
@@ -83,4 +121,4 @@ def generate_merged_pdf():
         shutil.rmtree(temp_dir, ignore_errors=True)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
