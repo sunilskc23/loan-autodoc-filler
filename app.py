@@ -5,7 +5,6 @@ import re
 import shutil
 import tempfile
 import zipfile
-import subprocess
 from docxtpl import DocxTemplate
 from pypdf import PdfMerger
 
@@ -22,35 +21,6 @@ def extract_placeholders(docx_path):
             return list(set(matches))
     except Exception:
         return []
-
-def convert_docx_to_pdf_exact(doc_path, output_dir):
-    pdf_name = os.path.basename(doc_path).replace('.docx', '.pdf')
-    pdf_path = os.path.join(output_dir, pdf_name)
-
-    # 1. Native LibreOffice CLI (Preserves 100% Alignment, Margins & Tables)
-    commands = [
-        ['libreoffice', '--headless', '--convert-to', 'pdf:writer_pdf_Export', doc_path, '--outdir', output_dir],
-        ['soffice', '--headless', '--convert-to', 'pdf:writer_pdf_Export', doc_path, '--outdir', output_dir]
-    ]
-
-    for cmd in commands:
-        try:
-            res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=25)
-            if os.path.exists(pdf_path) and os.path.getsize(pdf_path) > 0:
-                return pdf_path
-        except Exception:
-            continue
-
-    # 2. Local Machine Fallback (Windows MS Word API)
-    try:
-        from docx2pdf import convert
-        convert(doc_path, pdf_path)
-        if os.path.exists(pdf_path):
-            return pdf_path
-    except Exception:
-        pass
-
-    return None
 
 @app.route('/')
 def home():
@@ -87,8 +57,6 @@ def generate_complete_zip():
 
     temp_dir = tempfile.mkdtemp()
     zip_buffer = io.BytesIO()
-    pdf_merger = PdfMerger()
-    generated_pdf_paths = []
 
     try:
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as master_zip:
@@ -98,33 +66,17 @@ def generate_complete_zip():
                         src_path = os.path.join(root, file)
                         doc = DocxTemplate(src_path)
                         
+                        # Empty fields replace with blank lines
                         render_context = {k: (v if v else "______________________") for k, v in form_data.items()}
                         doc.render(render_context)
                         
+                        # Save filled DOCX
                         filled_docx_path = os.path.join(temp_dir, file)
                         doc.save(filled_docx_path)
                         
+                        # Add filled DOCX to ZIP
                         with open(filled_docx_path, 'rb') as f:
                             master_zip.writestr(f"Word_Files/{file}", f.read())
-                        
-                        pdf_path = convert_docx_to_pdf_exact(filled_docx_path, temp_dir)
-                        if pdf_path and os.path.exists(pdf_path):
-                            pdf_file_name = os.path.basename(pdf_path)
-                            with open(pdf_path, 'rb') as pf:
-                                master_zip.writestr(f"PDF_Files/{pdf_file_name}", pf.read())
-                            generated_pdf_paths.append(pdf_path)
-
-            if generated_pdf_paths:
-                for p_path in generated_pdf_paths:
-                    pdf_merger.append(p_path)
-                
-                merged_pdf_path = os.path.join(temp_dir, f"All_In_One_Loan_Booklet_{borrower_name}.pdf")
-                pdf_merger.write(merged_pdf_path)
-                pdf_merger.close()
-
-                if os.path.exists(merged_pdf_path):
-                    with open(merged_pdf_path, 'rb') as mf:
-                        master_zip.writestr(f"All_In_One_Loan_Booklet_{borrower_name}.pdf", mf.read())
 
         zip_buffer.seek(0)
         return send_file(
