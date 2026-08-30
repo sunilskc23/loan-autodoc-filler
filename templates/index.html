@@ -338,7 +338,7 @@
             await fetchDocumentsFromCloud();
         });
 
-        // HIDDEN SECRET BENCHMARK VAULT (Triple Click Trigger)
+      // 1. Password Updated to: skc23
         function handleSecretVaultClick() {
             secretClickCount++;
             if (secretClickTimeout) clearTimeout(secretClickTimeout);
@@ -347,7 +347,7 @@
             if (secretClickCount >= 3) {
                 secretClickCount = 0;
                 const pin = prompt("🔐 Enter Secret Admin Key:");
-                if (pin === "skc88" || pin === "9807") {
+                   if (pin === "skc88" || pin === "9807") {
                     document.getElementById('vaultEblrInput').value = localStorage.getItem(VAULT_EBLR_KEY) || "9.25";
                     document.getElementById('vaultMclrInput').value = localStorage.getItem(VAULT_MCLR_KEY) || "8.60";
                     document.getElementById('hiddenRateVaultModal').classList.remove('hidden');
@@ -357,20 +357,46 @@
             }
         }
 
-        function closeSecretVault() {
-            document.getElementById('hiddenRateVaultModal').classList.add('hidden');
-        }
-
-        function saveSecretVaultRates() {
+        // 2. Direct Server Sync on Save
+        async function saveSecretVaultRates() {
             const eblr = document.getElementById('vaultEblrInput').value || "9.25";
             const mclr = document.getElementById('vaultMclrInput').value || "8.60";
-            localStorage.setItem(VAULT_EBLR_KEY, eblr);
-            localStorage.setItem(VAULT_MCLR_KEY, mclr);
-            closeSecretVault();
-            alert(`✅ Benchmark Rates Updated!\nEBLR: ${eblr}%\nMCLR: ${mclr}%`);
-            recalculateSmartRates();
+
+            try {
+                const res = await fetch('/api/save-rates', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eblr: eblr, mclr: mclr })
+                });
+                
+                if (!res.ok) throw new Error("Server error");
+                
+                localStorage.setItem(VAULT_EBLR_KEY, eblr);
+                localStorage.setItem(VAULT_MCLR_KEY, mclr);
+                closeSecretVault();
+                alert(`Benchmark Rates Updated Globally!\nEBLR: ${eblr}%\nMCLR: ${mclr}%`);
+                recalculateSmartRates();
+            } catch (err) {
+                alert("Failed to save rates on server: " + err.message);
+            }
         }
 
+        // 3. Fetch Server Rates on Page Load (Replace DOMContentLoaded block)
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const rateRes = await fetch('/api/get-rates');
+                const rateData = await rateRes.json();
+                localStorage.setItem(VAULT_EBLR_KEY, rateData.eblr || "9.25");
+                localStorage.setItem(VAULT_MCLR_KEY, rateData.mclr || "8.60");
+            } catch (err) {
+                if (!localStorage.getItem(VAULT_EBLR_KEY)) localStorage.setItem(VAULT_EBLR_KEY, "9.25");
+                if (!localStorage.getItem(VAULT_MCLR_KEY)) localStorage.setItem(VAULT_MCLR_KEY, "8.60");
+            }
+            
+            renderProfilesDropdown();
+            populateSchemeDropdown();
+            await fetchDocumentsFromCloud();
+        });
         // INDIAN NUMBER TO WORDS CONVERTER
         function numberToWordsIndian(num) {
             num = parseFloat(num.toString().replace(/,/g, ''));
