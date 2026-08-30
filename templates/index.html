@@ -824,17 +824,37 @@
                 else categories.other.push(ph);
             });
 
+         // Dark Input Styling Helper with Calendar Datepicker
             function renderField(ph) {
                 const u = ph.toUpperCase();
                 const isAmountFigure = u.endsWith('_FIGURE') || u.includes('LIMIT_FIGURE') || u.includes('AMOUNT_FIGURE');
-                const isDate = u.includes('DATE') || u === 'DATE';
+                const isPrimaryDate = (ph === 'DATE' || ph === 'SANCTION_DATE' || ph === 'APPLICATION_DATE' || ph === 'DP_NOTE_DATE');
 
+                let inputType = "text";
                 let onInputAttr = "oninput=\"saveFieldData()\"";
+                let extraHtml = "";
 
                 if (isAmountFigure) {
                     onInputAttr = "oninput=\"handleAmountFigureInput(this)\" onfocus=\"handleAmountFigureFocus(this)\" onblur=\"handleAmountFigureBlur(this)\"";
-                } else if (isDate) {
-                    onInputAttr = "oninput=\"handleDateInput(this); saveFieldData();\"";
+                } else if (isPrimaryDate) {
+                    onInputAttr = "oninput=\"saveFieldData()\"";
+                    // Native Calendar Picker Helper
+                    extraHtml = `
+                    <div class="relative flex items-center">
+                        <input type="text" data-key="${ph}" value="${savedData[ph] || ''}" placeholder="DD-MM-YYYY"
+                               ${onInputAttr}
+                               class="ph-input w-full text-xs p-2.5 pr-10 bg-slate-900 border border-slate-700 rounded-lg text-amber-300 font-medium placeholder:text-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-inner">
+                        <input type="date" onchange="applyPickerDateToField('${ph}', this.value)"
+                               class="absolute right-2.5 w-5 h-5 opacity-40 hover:opacity-100 cursor-pointer bg-transparent border-0 text-transparent focus:outline-none [color-scheme:dark]" title="Open Calendar Picker">
+                    </div>`;
+                    
+                    return `
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 block uppercase tracking-wider truncate" title="${ph}">
+                            ${ph.replace(/_/g, ' ')} 📅
+                        </label>
+                        ${extraHtml}
+                    </div>`;
                 }
 
                 return `
@@ -842,14 +862,54 @@
                     <label class="text-[10px] font-bold text-slate-400 block uppercase tracking-wider truncate" title="${ph}">
                         ${ph.replace(/_/g, ' ')}
                     </label>
-                    <input type="text" data-key="${ph}" value="${savedData[ph] || ''}" placeholder="Enter ${ph}..."
+                    <input type="${inputType}" data-key="${ph}" value="${savedData[ph] || ''}" placeholder="Enter ${ph}..."
                            ${onInputAttr}
                            class="ph-input w-full text-xs p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-amber-300 font-medium placeholder:text-slate-500 placeholder:font-normal focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition shadow-inner">
                 </div>`;
             }
-
             let fullHtml = '';
+// CALENDAR PICKER SELECTION HANDLER
+        function applyPickerDateToField(targetKey, yyyyMmDdVal) {
+            if (!yyyyMmDdVal) return;
+            
+            const [year, month, day] = yyyyMmDdVal.split('-');
+            const formattedDate = `${day}-${month}-${year}`;
 
+            // Target field me DD-MM-YYYY set karein
+            const targetInput = document.querySelector(`input[data-key="${targetKey}"]`);
+            if (targetInput) targetInput.value = formattedDate;
+
+            // Day, Month, Year_YY auto-derive karein
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const monthIdx = parseInt(month, 10) - 1;
+            const monthStr = monthNames[monthIdx] || month;
+
+            const dayInt = parseInt(day, 10);
+            let daySuffix = "th";
+            if (dayInt === 1 || dayInt === 21 || dayInt === 31) daySuffix = "st";
+            else if (dayInt === 2 || dayInt === 22) daySuffix = "nd";
+            else if (dayInt === 3 || dayInt === 23) daySuffix = "rd";
+            const dayStr = `${dayInt}${daySuffix}`;
+
+            const year2Digit = year.length === 4 ? year.substring(2) : year;
+
+            // Auto fill split placeholders
+            const dayField = document.querySelector('input[data-key="DAY"]');
+            const monthField = document.querySelector('input[data-key="MONTH"]');
+            const yearYyField = document.querySelector('input[data-key="YEAR_YY"]');
+            
+            if (dayField) dayField.value = dayStr;
+            if (monthField) monthField.value = monthStr;
+            if (yearYyField) yearYyField.value = year2Digit;
+
+            // Auto sync other standard date placeholders if empty
+            ['DP_NOTE_DATE', 'SANCTION_DATE', 'APPLICATION_DATE'].forEach(k => {
+                const el = document.querySelector(`input[data-key="${k}"]`);
+                if (el && !el.value) el.value = formattedDate;
+            });
+
+            saveFieldData();
+        }
             // Section: Core & Borrower
             if (categories.core.length || categories.borrower1.length) {
                 fullHtml += `
