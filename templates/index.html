@@ -338,7 +338,7 @@
             await fetchDocumentsFromCloud();
         });
 
-      // 1. Password Updated to: skc23
+     // ================= SECRET VAULT CONTROLS =================
         function handleSecretVaultClick() {
             secretClickCount++;
             if (secretClickTimeout) clearTimeout(secretClickTimeout);
@@ -356,8 +356,15 @@
                 }
             }
         }
-
+// Modal Close Function (Fixed Missing Definition)
+        function closeSecretVault() {
+            const modal = document.getElementById('hiddenRateVaultModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
         // 2. Direct Server Sync on Save
+      // Direct Server Sync on Save
         async function saveSecretVaultRates() {
             const eblr = document.getElementById('vaultEblrInput').value || "9.25";
             const mclr = document.getElementById('vaultMclrInput').value || "8.60";
@@ -368,11 +375,12 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ eblr: eblr, mclr: mclr })
                 });
-                
-                if (!res.ok) throw new Error("Server error");
-                
+
+                if (!res.ok) throw new Error("Server communication failed");
+
                 localStorage.setItem(VAULT_EBLR_KEY, eblr);
                 localStorage.setItem(VAULT_MCLR_KEY, mclr);
+                
                 closeSecretVault();
                 alert(`Benchmark Rates Updated Globally!\nEBLR: ${eblr}%\nMCLR: ${mclr}%`);
                 recalculateSmartRates();
