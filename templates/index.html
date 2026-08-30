@@ -9,11 +9,14 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 font-sans">
 
-    <!-- Top Header -->
     <header class="bg-indigo-700 text-white shadow-lg py-4 px-6">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-3xl font-extrabold tracking-wide text-yellow-300">🏦 LoanAutoDoc Filler <span class="text-sm font-normal text-white bg-indigo-900 px-2.5 py-0.5 rounded-full border border-indigo-400">ver.-1.1</span></h1>
+
+            <div class="cursor-pointer select-none" onclick="handleSecretVaultClick()">
+                <h1 class="text-3xl font-extrabold tracking-wide text-yellow-300 flex items-center gap-2">
+                    <span>🏦 LoanAutoDoc Filler</span>
+                    <span class="text-sm font-normal text-white bg-indigo-900 px-2.5 py-0.5 rounded-full border border-indigo-400">ver.-1.1 Pro</span>
+                </h1>
                 <p class="text-xs text-indigo-100 mt-1 font-medium">Created & Developed by <span class="font-bold text-yellow-200">SKC</span> (Union Bank of India)</p>
                 <div class="flex flex-wrap items-center gap-3 text-xs mt-1.5 text-indigo-200">
                     <span>📱 <strong>9807689654</strong></span>
@@ -29,16 +32,43 @@
                 <div class="text-left flex flex-col justify-center">
                     <p class="text-xs font-bold text-yellow-300 leading-tight">💬 Feedback & Support</p>
                     <p class="text-[10px] text-indigo-100 leading-tight mt-0.5">Scan QR Code to join<br>WhatsApp Group</p>
-                    <span class="inline-block mt-1 text-[9px] bg-emerald-600 text-white px-2 py-0.5 rounded font-semibold self-start shadow-sm">⚡ Cloud Ready</span>
+                    <span class="inline-block mt-1 text-[9px] bg-emerald-600 text-white px-2 py-0.5 rounded font-semibold self-start shadow-sm">⚡ Smart Auto-Fill Active</span>
                 </div>
             </div>
+
         </div>
     </header>
 
+    <div id="hiddenRateVaultModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-sm w-full p-5 space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-indigo-900 text-sm flex items-center gap-1.5">
+                    <span>🔐 Benchmark Rates Controller</span>
+                </h3>
+                <button onclick="closeSecretVault()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">🏦 Current Bank EBLR (%):</label>
+                    <input type="number" step="0.01" id="vaultEblrInput" class="w-full p-2 border border-slate-300 rounded-lg font-bold text-indigo-700 focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">🏦 Current 1-Year MCLR (%):</label>
+                    <input type="number" step="0.01" id="vaultMclrInput" class="w-full p-2 border border-slate-300 rounded-lg font-bold text-emerald-700 focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <p class="text-[10px] text-slate-400 italic">Saved values will automatically calculate final interest rates across all loan templates.</p>
+            </div>
+            <div class="pt-2 flex justify-end gap-2 border-t">
+                <button onclick="closeSecretVault()" class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg font-medium text-xs">Cancel</button>
+                <button onclick="saveSecretVaultRates()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs shadow">Save Rates</button>
+            </div>
+        </div>
+    </div>
+
     <main class="max-w-7xl mx-auto p-6 space-y-6">
 
-        <!-- Section 1: Controls -->
         <section class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+
             <div class="flex justify-between items-center border-b pb-3">
                 <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
                     <span>1. Select Scheme & Controls</span>
@@ -48,21 +78,22 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+
                 <div class="md:col-span-5 p-3.5 bg-amber-50/80 border border-amber-200 rounded-lg space-y-2.5 text-xs">
                     <div class="border-b border-amber-200 pb-1 flex justify-between items-center">
                         <span class="font-bold text-amber-900 block">📌 Demand Promissory Note (DP Note):</span>
                         <button type="button" onclick="clearDpNoteRadio()" class="text-[10px] text-amber-700 hover:underline font-semibold">Clear</button>
                     </div>
                     <div class="grid grid-cols-1 gap-1">
-                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
+                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
                             <input type="radio" name="dpNoteSelect" value="SD21" onchange="toggleTopControlDoc('SD21', this.checked, 'radio')" class="text-indigo-600">
-                            <span>SD-21 (Fixed Interest Loans)</span>
+                            <span>SD-21 (Fixed Interest Based Loans)</span>
                         </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
+                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
                             <input type="radio" name="dpNoteSelect" value="SD21A" onchange="toggleTopControlDoc('SD21A', this.checked, 'radio')" class="text-indigo-600">
                             <span>SD-21-A (MCLR Linked Loans)</span>
                         </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
+                        <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
                             <input type="radio" name="dpNoteSelect" value="SD21B" onchange="toggleTopControlDoc('SD21B', this.checked, 'radio')" class="text-indigo-600">
                             <span>SD-21-B (EBLR Linked Loans)</span>
                         </label>
@@ -72,11 +103,11 @@
                         <span class="font-bold text-amber-900 block">📌 Debit Balance Confirmation (DBC):</span>
                     </div>
                     <div class="flex items-center gap-4">
-                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium">
+                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
                             <input type="checkbox" id="dbcSd22" value="SD22" onchange="toggleTopControlDoc('SD22', this.checked, 'checkbox')" class="text-indigo-600 rounded">
                             <span>SD-22 (Simple DBC)</span>
                         </label>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium">
+                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-700 font-medium hover:text-slate-900">
                             <input type="checkbox" id="dbcSd23" value="SD23" onchange="toggleTopControlDoc('SD23', this.checked, 'checkbox')" class="text-indigo-600 rounded">
                             <span>SD-23 (Composite DBC)</span>
                         </label>
@@ -89,11 +120,11 @@
                             class="w-full text-xs p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-800 bg-slate-50">
                         <option value="">-- Manual Selection / Select Scheme to Auto-Check --</option>
                     </select>
-                    <p class="text-[11px] text-slate-400 italic">Selecting a scheme auto-checks required agreements and updates preview below.</p>
+                    <p class="text-[11px] text-slate-400 italic">Selecting a scheme will auto-check required agreements and show interactive preview.</p>
                 </div>
+
             </div>
 
-            <!-- Interactive Preview Box -->
             <div id="schemePreviewContainer" class="hidden p-4 bg-indigo-50/80 border border-indigo-200 rounded-xl space-y-2 text-xs">
                 <div class="flex justify-between items-center border-b border-indigo-200 pb-2">
                     <h3 id="previewSchemeTitle" class="font-bold text-indigo-900 text-sm flex items-center gap-1.5">
@@ -103,15 +134,14 @@
                 </div>
                 <div id="schemePreviewList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 pt-1 max-h-48 overflow-y-auto"></div>
                 <p class="text-[10.5px] text-indigo-600 italic pt-1 border-t border-indigo-100">
-                    💡 Click on any document above to toggle selection directly.
+                    💡 <strong>Tip:</strong> Click on any document above to select/unselect directly.
                 </p>
             </div>
+
         </section>
 
-        <!-- Main Workspace -->
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-            <!-- Checklist -->
             <div class="lg:col-span-5 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <div>
@@ -128,32 +158,29 @@
                         </h3>
                         <div id="colAD" class="overflow-y-auto space-y-1 pr-1 flex-1"></div>
                     </div>
-
                     <div class="border rounded-lg p-2.5 bg-slate-50/50 flex flex-col h-64">
                         <h3 class="font-bold text-emerald-900 border-b pb-1 mb-1.5 flex justify-between items-center">
                             <span>📜 SD Documents</span><span id="countSD" class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 rounded font-mono">0</span>
                         </h3>
                         <div id="colSD" class="overflow-y-auto space-y-1 pr-1 flex-1"></div>
                     </div>
-
                     <div class="border rounded-lg p-2.5 bg-slate-50/50 flex flex-col h-64">
                         <h3 class="font-bold text-purple-900 border-b pb-1 mb-1.5 flex justify-between items-center">
-                            <span>📑 Supple SD</span><span id="countSDS" class="text-[10px] bg-purple-100 text-purple-800 px-1.5 rounded font-mono">0</span>
+                            <span>📑 Supplementary SD</span><span id="countSDS" class="text-[10px] bg-purple-100 text-purple-800 px-1.5 rounded font-mono">0</span>
                         </h3>
                         <div id="colSDS" class="overflow-y-auto space-y-1 pr-1 flex-1"></div>
                     </div>
-
                     <div class="border rounded-lg p-2.5 bg-slate-50/50 flex flex-col h-64">
                         <h3 class="font-bold text-slate-800 border-b pb-1 mb-1.5 flex justify-between items-center">
-                            <span>📁 Other Docs</span><span id="countOther" class="text-[10px] bg-slate-200 text-slate-800 px-1.5 rounded font-mono">0</span>
+                            <span>📁 Other Documents</span><span id="countOther" class="text-[10px] bg-slate-200 text-slate-800 px-1.5 rounded font-mono">0</span>
                         </h3>
                         <div id="colOther" class="overflow-y-auto space-y-1 pr-1 flex-1"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Form -->
             <div class="lg:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-slate-200 min-h-[520px] flex flex-col">
+
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3 mb-4">
                     <div>
                         <div class="flex items-center gap-2">
@@ -161,13 +188,16 @@
                             <span id="placeholderCountBadge" class="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded border border-indigo-200">0 Fields</span>
                         </div>
                         <div class="h-4 flex items-center">
-                            <span id="autoSaveStatus" class="text-[11px] text-emerald-600 font-medium opacity-0 transition-opacity duration-300">✓ Data saved locally</span>
+                            <span id="autoSaveStatus" class="text-[11px] text-emerald-600 font-medium opacity-0 transition-opacity duration-300">
+                                ✓ Data saved locally
+                            </span>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <label class="text-xs font-semibold text-slate-700">👤 Profile:</label>
-                        <select id="profileDropdown" onchange="loadSelectedProfile()" class="text-xs p-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 min-w-[150px]">
+                        <label class="text-xs font-semibold text-slate-700 whitespace-nowrap">👤 Profile:</label>
+                        <select id="profileDropdown" onchange="loadSelectedProfile()"
+                                class="text-xs p-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none min-w-[150px]">
                             <option value="">-- Choose Profile --</option>
                         </select>
                         <button type="button" onclick="deleteSelectedProfile()" class="text-xs bg-red-50 text-red-600 border border-red-200 px-2 py-1.5 rounded-lg">🗑️</button>
@@ -176,38 +206,39 @@
                 </div>
 
                 <form id="placeholderForm" onsubmit="generateDocuments(event)" class="flex-1 flex flex-col justify-between space-y-4">
-                    <div id="formFieldsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-[440px] overflow-y-auto pr-2">
-                        <div class="col-span-2 text-center text-slate-400 py-16 text-xs">
-                            Select documents to generate fields.
+                    
+                    <div id="smartFormContainer" class="max-h-[460px] overflow-y-auto pr-2 space-y-3.5">
+                        <div class="text-center text-slate-400 py-16 text-xs">
+                            Select documents from Left Checklist or Scheme to generate smart fields.
                         </div>
                     </div>
 
                     <div class="pt-3 border-t space-y-2.5">
                         
-                        <!-- DYNAMIC PROGRESS BAR & COUNTER -->
                         <div id="progressContainer" class="hidden space-y-1.5 p-3 bg-indigo-50 border border-indigo-200 rounded-xl">
                             <div class="flex justify-between text-xs font-bold text-indigo-900">
-                                <span id="progressStatusText">Starting document generation...</span>
+                                <span id="progressStatusText">Generating Word documents...</span>
                                 <span id="progressPercentage">0%</span>
                             </div>
                             <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
                                 <div id="progressBar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300 w-0"></div>
                             </div>
-                            <p class="text-[10px] text-indigo-500 italic text-right" id="progressSubText">Rendering DOCX & High-Quality PDF...</p>
                         </div>
 
                         <div id="successMessage" class="hidden p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-700 font-medium flex items-center gap-2">
-                            <span>✅ Complete Package Downloaded! </span>
+                            <span>✅ ZIP Downloaded!</span>
                         </div>
 
                         <button type="submit" id="downloadBtn" disabled
                                 class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow transition text-center flex justify-center items-center gap-2 text-xs uppercase tracking-wider">
-                            <span id="btnText">📥 Generate, Save Profile & Download Complete ZIP</span>
+                            <span id="btnText">📥 Generate, Save Profile & Download (.ZIP)</span>
                         </button>
                     </div>
                 </form>
             </div>
+
         </section>
+
     </main>
 
     <script>
@@ -215,11 +246,14 @@
         let activePlaceholdersSet = new Set();
         let saveTimeout = null;
         let currentSelectedSchemeDocs = [];
-        let progressInterval = null;
+        let secretClickCount = 0;
+        let secretClickTimeout = null;
 
         const STORAGE_KEY = "LoanDocAutoFill_SavedData";
         const PROFILES_KEY = "LoanDocAutoFill_SavedProfiles";
         const COUNTER_KEY = "LoanDocAutoFill_CustomerCounter";
+        const VAULT_EBLR_KEY = "LoanDocAutoFill_EBLR_Rate";
+        const VAULT_MCLR_KEY = "LoanDocAutoFill_MCLR_Rate";
 
         const SCHEME_DOCUMENTS_MAP = {
             "ADV_FDR": ["AD09", "AD09M", "AD02A", "AD02"],
@@ -296,10 +330,213 @@
         };
 
         window.addEventListener('DOMContentLoaded', async () => {
+            if (!localStorage.getItem(VAULT_EBLR_KEY)) localStorage.setItem(VAULT_EBLR_KEY, "9.25");
+            if (!localStorage.getItem(VAULT_MCLR_KEY)) localStorage.setItem(VAULT_MCLR_KEY, "8.60");
+            
             renderProfilesDropdown();
             populateSchemeDropdown();
             await fetchDocumentsFromCloud();
         });
+
+        // HIDDEN SECRET BENCHMARK VAULT (Triple Click Trigger)
+        function handleSecretVaultClick() {
+            secretClickCount++;
+            if (secretClickTimeout) clearTimeout(secretClickTimeout);
+            secretClickTimeout = setTimeout(() => { secretClickCount = 0; }, 800);
+
+            if (secretClickCount >= 3) {
+                secretClickCount = 0;
+                const pin = prompt("🔐 Enter Secret Admin Key:");
+                if (pin === "skc88" || pin === "9807") {
+                    document.getElementById('vaultEblrInput').value = localStorage.getItem(VAULT_EBLR_KEY) || "9.25";
+                    document.getElementById('vaultMclrInput').value = localStorage.getItem(VAULT_MCLR_KEY) || "8.60";
+                    document.getElementById('hiddenRateVaultModal').classList.remove('hidden');
+                } else if (pin !== null) {
+                    alert("Unauthorized Access.");
+                }
+            }
+        }
+
+        function closeSecretVault() {
+            document.getElementById('hiddenRateVaultModal').classList.add('hidden');
+        }
+
+        function saveSecretVaultRates() {
+            const eblr = document.getElementById('vaultEblrInput').value || "9.25";
+            const mclr = document.getElementById('vaultMclrInput').value || "8.60";
+            localStorage.setItem(VAULT_EBLR_KEY, eblr);
+            localStorage.setItem(VAULT_MCLR_KEY, mclr);
+            closeSecretVault();
+            alert(`✅ Benchmark Rates Updated!\nEBLR: ${eblr}%\nMCLR: ${mclr}%`);
+            recalculateSmartRates();
+        }
+
+        // INDIAN NUMBER TO WORDS CONVERTER
+        function numberToWordsIndian(num) {
+            num = parseFloat(num.toString().replace(/,/g, ''));
+            if (isNaN(num) || num === 0) return "";
+
+            const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+            const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+            function inWords(n) {
+                if (n === 0) return '';
+                if (n < 20) return a[n];
+                const digit = n % 10;
+                if (n < 100) return b[Math.floor(n / 10)] + (digit ? ' ' + a[digit] : ' ');
+                if (n < 1000) return a[Math.floor(n / 100)] + 'Hundred ' + (n % 100 !== 0 ? 'and ' + inWords(n % 100) : '');
+                if (n < 100000) return inWords(Math.floor(n / 1000)) + 'Thousand ' + inWords(n % 1000);
+                if (n < 10000000) return inWords(Math.floor(n / 100000)) + 'Lakh ' + inWords(n % 100000);
+                return inWords(Math.floor(n / 10000000)) + 'Crore ' + inWords(n % 10000000);
+            }
+
+            const whole = Math.floor(num);
+            const fraction = Math.round((num - whole) * 100);
+            let str = "Rupees " + inWords(whole).trim();
+            if (fraction > 0) {
+                str += " and " + inWords(fraction).trim() + " Paise";
+            }
+            return str + " Only";
+        }
+
+        // INDIAN COMMA FORMATTER (10,00,000/-)
+        function formatIndianCurrency(val) {
+            if (!val) return "";
+            let clean = val.toString().replace(/[^0-9.]/g, '');
+            if (!clean) return "";
+            let parts = clean.split('.');
+            let integerPart = parts[0];
+            let decimalPart = parts.length > 1 ? '.' + parts[1].substring(0, 2) : '';
+
+            let lastThree = integerPart.substring(integerPart.length - 3);
+            let otherNumbers = integerPart.substring(0, integerPart.length - 3);
+            if (otherNumbers !== '') lastThree = ',' + lastThree;
+            let formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + decimalPart;
+            return formatted + "/-";
+        }
+
+        // SMART FIELD HANDLER: Amount Figures -> Words + Indian Formats
+        function handleAmountFigureInput(inputElement) {
+            const key = inputElement.dataset.key;
+            let rawValue = inputElement.value.replace(/[^0-9.]/g, '');
+            
+            const wordsKey = key.replace('_FIGURE', '_WORDS');
+            const wordsInput = document.querySelector(`input[data-key="${wordsKey}"]`);
+
+            if (rawValue) {
+                if (wordsInput) {
+                    wordsInput.value = numberToWordsIndian(rawValue);
+                }
+            } else {
+                if (wordsInput) wordsInput.value = "";
+            }
+            saveFieldData();
+        }
+
+        function handleAmountFigureBlur(inputElement) {
+            let rawValue = inputElement.value.replace(/[^0-9.]/g, '');
+            if (rawValue) {
+                inputElement.value = formatIndianCurrency(rawValue);
+                saveFieldData();
+            }
+        }
+
+        function handleAmountFigureFocus(inputElement) {
+            let clean = inputElement.value.replace("/-", "").replace(/,/g, "").trim();
+            inputElement.value = clean;
+        }
+
+        // SMART DATE SPLITTER (DD-MM-YYYY -> DAY, MONTH, YEAR_YY)
+        function handleDateInput(inputElement) {
+            const val = inputElement.value.trim();
+            if (!val) return;
+
+            let day = "", month = "", year = "";
+            // Handle DD-MM-YYYY or YYYY-MM-DD
+            if (val.includes('-')) {
+                const parts = val.split('-');
+                if (parts[0].length === 4) { // YYYY-MM-DD
+                    year = parts[0]; month = parts[1]; day = parts[2];
+                } else { // DD-MM-YYYY
+                    day = parts[0]; month = parts[1]; year = parts[2];
+                }
+            }
+
+            if (day && month && year) {
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                const monthIdx = parseInt(month, 10) - 1;
+                const monthStr = monthNames[monthIdx] || month;
+
+                const dayInt = parseInt(day, 10);
+                let daySuffix = "th";
+                if (dayInt === 1 || dayInt === 21 || dayInt === 31) daySuffix = "st";
+                else if (dayInt === 2 || dayInt === 22) daySuffix = "nd";
+                else if (dayInt === 3 || dayInt === 23) daySuffix = "rd";
+                const dayStr = `${dayInt}${daySuffix}`;
+
+                const year2Digit = year.length === 4 ? year.substring(2) : year;
+
+                setSmartFieldValue("DAY", dayStr);
+                setSmartFieldValue("MONTH", monthStr);
+                setSmartFieldValue("YEAR_YY", year2Digit);
+                setSmartFieldValue("DP_NOTE_DATE", `${day.padStart(2, '0')}-${month.padStart(2, '0')}-${year}`);
+                setSmartFieldValue("SANCTION_DATE", `${day.padStart(2, '0')}-${month.padStart(2, '0')}-${year}`);
+                setSmartFieldValue("APPLICATION_DATE", `${day.padStart(2, '0')}-${month.padStart(2, '0')}-${year}`);
+            }
+            saveFieldData();
+        }
+
+        function setSmartFieldValue(key, value) {
+            const el = document.querySelector(`input[data-key="${key}"]`);
+            if (el && !el.value) {
+                el.value = value;
+            }
+        }
+
+        // SMART RATE CALCULATOR
+        function recalculateSmartRates() {
+            const eblrBase = parseFloat(localStorage.getItem(VAULT_EBLR_KEY) || "9.25");
+            const mclrBase = parseFloat(localStorage.getItem(VAULT_MCLR_KEY) || "8.60");
+
+            const spreadInput = document.querySelector('input[data-key="SPREAD_RATE"]');
+            const spreadVal = spreadInput ? parseFloat(spreadInput.value || "0") : 0;
+
+            const isEblrDoc = loadedFiles.some(f => f.checked && (f.name.includes("SD21B") || f.name.includes("EBLR")));
+            const isMclrDoc = loadedFiles.some(f => f.checked && (f.name.includes("SD21A") || f.name.includes("MCLR")));
+
+            const eblrField = document.querySelector('input[data-key="EBLR_RATE"]');
+            const mclrField = document.querySelector('input[data-key="MCLR_RATE"]');
+            const bpsField = document.querySelector('input[data-key="BASIS_POINTS"]');
+            const roiField = document.querySelector('input[data-key="INTEREST_RATE"]');
+
+            if (eblrField) eblrField.value = `${eblrBase.toFixed(2)}%`;
+            if (mclrField) mclrField.value = `${mclrBase.toFixed(2)}%`;
+            if (bpsField) bpsField.value = `${Math.round(spreadVal * 100)} bps`;
+
+            if (roiField && !roiField.dataset.userEdited) {
+                if (isEblrDoc) {
+                    roiField.value = `${(eblrBase + spreadVal).toFixed(2)}%`;
+                } else if (isMclrDoc) {
+                    roiField.value = `${(mclrBase + spreadVal).toFixed(2)}%`;
+                }
+            }
+            saveFieldData();
+        }
+
+        // AUTO ADDRESS SYNC
+        function copyPresentAddressToPermanent() {
+            const present = document.querySelector('input[data-key="BORROWER_PRESENT_ADDRESS"]')?.value ||
+                            document.querySelector('input[data-key="BORROWER_ADDRESS"]')?.value || "";
+            
+            const perm = document.querySelector('input[data-key="BORROWER_PERMANENT_ADDRESS"]');
+            const not1 = document.querySelector('input[data-key="BORROWER_NOTICE_ADDRESS_1"]');
+            const not2 = document.querySelector('input[data-key="BORROWER_NOTICE_ADDRESS_2"]');
+
+            if (perm) perm.value = present;
+            if (not1) not1.value = present;
+            if (not2) not2.value = present;
+            saveFieldData();
+        }
 
         async function fetchDocumentsFromCloud() {
             const badge = document.getElementById('loadingDocsBadge');
@@ -308,7 +545,7 @@
                 const res = await fetch('/api/get-docs');
                 loadedFiles = await res.json();
                 
-                badge.innerText = "✓ Docs Loaded";
+                badge.innerText = "✓ Docs Active";
                 badge.classList.replace('bg-indigo-100', 'bg-emerald-100');
                 badge.classList.replace('text-indigo-800', 'text-emerald-800');
                 badge.classList.replace('border-indigo-300', 'border-emerald-300');
@@ -505,29 +742,161 @@
             loadedFiles.forEach(f => {
                 if (f.checked) f.placeholders.forEach(ph => activePlaceholdersSet.add(ph));
             });
-            renderFormFields(Array.from(activePlaceholdersSet).sort());
+            renderSmartCategorizedFields(Array.from(activePlaceholdersSet));
         }
 
-        function renderFormFields(placeholders) {
-            const container = document.getElementById('formFieldsContainer');
+        // RENDER SMART CATEGORIZED FIELDS WITH COLLAPSIBLE ACCORDIONS
+        function renderSmartCategorizedFields(placeholders) {
+            const container = document.getElementById('smartFormContainer');
             const downloadBtn = document.getElementById('downloadBtn');
             document.getElementById('placeholderCountBadge').innerText = `${placeholders.length} Fields`;
 
             if (placeholders.length === 0) {
-                container.innerHTML = `<div class="col-span-2 text-center text-slate-400 py-16 text-xs">Select documents from Left Checklist to generate fill fields.</div>`;
+                container.innerHTML = `<div class="text-center text-slate-400 py-16 text-xs">Select documents from Left Checklist to generate smart fields.</div>`;
                 downloadBtn.disabled = true;
                 return;
             }
 
             const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-            container.innerHTML = placeholders.map(ph => `
-                <div class="space-y-1">
-                    <label class="text-[10.5px] font-bold text-slate-600 block uppercase tracking-wider">${ph.replace(/_/g, ' ')}</label>
-                    <input type="text" data-key="${ph}" value="${savedData[ph] || ''}" placeholder="Enter ${ph}"
-                           oninput="saveFieldData()"
-                           class="ph-input w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                </div>`).join('');
 
+            // Categorize Active Placeholders
+            const categories = {
+                core: [],
+                dates: [],
+                amounts: [],
+                borrower1: [],
+                coBorrowers: [],
+                guarantors: [],
+                interestRates: [],
+                securityProperty: [],
+                other: []
+            };
+
+            placeholders.forEach(ph => {
+                const u = ph.toUpperCase();
+                if (u.includes('CO_BORROWER') || u.includes('BORROWER_2') || u.includes('BORROWER_3') || u.includes('BORROWER_4')) categories.coBorrowers.push(ph);
+                else if (u.includes('GUARANTOR')) categories.guarantors.push(ph);
+                else if (u.includes('RATE') || u.includes('MCLR') || u.includes('EBLR') || u.includes('SPREAD') || u.includes('BASIS_POINTS')) categories.interestRates.push(ph);
+                else if (u.includes('AMOUNT') || u.includes('LIMIT') || u.includes('FIGURE') || u.includes('WORDS') || u.includes('BALANCE') || u.includes('CHARGES')) categories.amounts.push(ph);
+                else if (u.includes('DATE') || u === 'DAY' || u === 'MONTH' || u === 'YEAR_YY') categories.dates.push(ph);
+                else if (u.includes('BORROWER') || u.includes('FATHER') || u.includes('SPOUSE')) categories.borrower1.push(ph);
+                else if (u.includes('PROPERTY') || u.includes('VEHICLE') || u.includes('DEPOSIT') || u.includes('GOODS')) categories.securityProperty.push(ph);
+                else if (u.includes('BRANCH') || u.includes('ACCOUNT') || u.includes('CIF') || u.includes('SANCTION')) categories.core.push(ph);
+                else categories.other.push(ph);
+            });
+
+            function renderField(ph) {
+                const u = ph.toUpperCase();
+                const isAmountFigure = u.endsWith('_FIGURE') || u.includes('LIMIT_FIGURE') || u.includes('AMOUNT_FIGURE');
+                const isDate = u.includes('DATE') || u === 'DATE';
+
+                let inputType = "text";
+                let onInputAttr = "oninput=\"saveFieldData()\"";
+                let extraClass = "";
+
+                if (isAmountFigure) {
+                    onInputAttr = "oninput=\"handleAmountFigureInput(this)\" onfocus=\"handleAmountFigureFocus(this)\" onblur=\"handleAmountFigureBlur(this)\"";
+                    extraClass = "font-semibold text-indigo-900";
+                } else if (isDate) {
+                    onInputAttr = "oninput=\"handleDateInput(this); saveFieldData();\"";
+                }
+
+                return `
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-600 block uppercase tracking-wider truncate" title="${ph}">
+                        ${ph.replace(/_/g, ' ')}
+                    </label>
+                    <input type="${inputType}" data-key="${ph}" value="${savedData[ph] || ''}" placeholder="Enter ${ph}"
+                           ${onInputAttr}
+                           class="ph-input w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 ${extraClass}">
+                </div>`;
+            }
+
+            let fullHtml = '';
+
+            // Section: Core & Borrower
+            if (categories.core.length || categories.borrower1.length) {
+                fullHtml += `
+                <div class="p-3 bg-slate-50 border rounded-xl space-y-2.5">
+                    <div class="flex justify-between items-center border-b pb-1">
+                        <span class="font-bold text-indigo-900 text-xs">👤 Borrower & Account Information</span>
+                        <button type="button" onclick="copyPresentAddressToPermanent()" class="text-[10.5px] bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-semibold px-2 py-0.5 rounded transition">
+                            ☑ Same as Present Address
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        ${[...categories.core, ...categories.borrower1].map(renderField).join('')}
+                    </div>
+                </div>`;
+            }
+
+            // Section: Amounts & Words
+            if (categories.amounts.length) {
+                fullHtml += `
+                <div class="p-3 bg-emerald-50/60 border border-emerald-200 rounded-xl space-y-2.5">
+                    <span class="font-bold text-emerald-900 text-xs border-b border-emerald-200 pb-1 block">💰 Amounts & Auto Words Conversion</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        ${categories.amounts.map(renderField).join('')}
+                    </div>
+                </div>`;
+            }
+
+            // Section: Dates & Rates
+            if (categories.dates.length || categories.interestRates.length) {
+                fullHtml += `
+                <div class="p-3 bg-amber-50/60 border border-amber-200 rounded-xl space-y-2.5">
+                    <div class="flex justify-between items-center border-b border-amber-200 pb-1">
+                        <span class="font-bold text-amber-900 text-xs">📅 Dates & Interest Rates</span>
+                        <button type="button" onclick="recalculateSmartRates()" class="text-[10px] text-amber-800 underline font-semibold">Recalculate Rates</button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        ${[...categories.dates, ...categories.interestRates].map(renderField).join('')}
+                    </div>
+                </div>`;
+            }
+
+            // Section: Collapsible Co-Borrowers
+            if (categories.coBorrowers.length) {
+                fullHtml += `
+                <details class="p-3 bg-purple-50/60 border border-purple-200 rounded-xl space-y-2.5 group">
+                    <summary class="font-bold text-purple-900 text-xs cursor-pointer select-none flex justify-between items-center">
+                        <span>👥 Co-Borrowers Details (${categories.coBorrowers.length} detected)</span>
+                        <span class="text-[11px] text-purple-700 font-normal group-open:hidden">▼ Expand</span>
+                        <span class="text-[11px] text-purple-700 font-normal hidden group-open:inline">▲ Collapse</span>
+                    </summary>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+                        ${categories.coBorrowers.map(renderField).join('')}
+                    </div>
+                </details>`;
+            }
+
+            // Section: Collapsible Guarantors
+            if (categories.guarantors.length) {
+                fullHtml += `
+                <details class="p-3 bg-rose-50/60 border border-rose-200 rounded-xl space-y-2.5 group">
+                    <summary class="font-bold text-rose-900 text-xs cursor-pointer select-none flex justify-between items-center">
+                        <span>🛡️ Guarantors Details (${categories.guarantors.length} detected)</span>
+                        <span class="text-[11px] text-rose-700 font-normal group-open:hidden">▼ Expand</span>
+                        <span class="text-[11px] text-rose-700 font-normal hidden group-open:inline">▲ Collapse</span>
+                    </summary>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+                        ${categories.guarantors.map(renderField).join('')}
+                    </div>
+                </details>`;
+            }
+
+            // Section: Security / Property / Other
+            if (categories.securityProperty.length || categories.other.length) {
+                fullHtml += `
+                <div class="p-3 bg-slate-50 border rounded-xl space-y-2.5">
+                    <span class="font-bold text-slate-800 text-xs border-b pb-1 block">📑 Security, Property & Other Schedules</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        ${[...categories.securityProperty, ...categories.other].map(renderField).join('')}
+                    </div>
+                </div>`;
+            }
+
+            container.innerHTML = fullHtml;
             downloadBtn.disabled = false;
         }
 
@@ -580,44 +949,6 @@
             }
         }
 
-        // SMOOTH PROGRESS BAR ANIMATOR
-        function startProgressBarAnimation() {
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const progressPct = document.getElementById('progressPercentage');
-            const progressStatus = document.getElementById('progressStatusText');
-
-            progressContainer.classList.remove('hidden');
-            let currentPct = 0;
-            progressBar.style.width = '0%';
-            progressPct.innerText = '0%';
-
-            progressInterval = setInterval(() => {
-                if (currentPct < 90) {
-                    currentPct += Math.floor(Math.random() * 8) + 4;
-                    if (currentPct > 90) currentPct = 90;
-
-                    progressBar.style.width = `${currentPct}%`;
-                    progressPct.innerText = `${currentPct}%`;
-
-                    if (currentPct < 30) progressStatus.innerText = "1/3 Filling Word placeholders...";
-                    else if (currentPct < 70) progressStatus.innerText = "2/3 Converting DOCX to aligned PDF...";
-                    else progressStatus.innerText = "3/3 Merging All-In-One Booklet & Packing ZIP...";
-                }
-            }, 350);
-        }
-
-        function completeProgressBarAnimation() {
-            clearInterval(progressInterval);
-            const progressBar = document.getElementById('progressBar');
-            const progressPct = document.getElementById('progressPercentage');
-            const progressStatus = document.getElementById('progressStatusText');
-
-            progressBar.style.width = '100%';
-            progressPct.innerText = '100%';
-            progressStatus.innerText = 'Done! Starting Download...';
-        }
-
         // SUBMIT & GENERATE ZIP
         async function generateDocuments(e) {
             e.preventDefault();
@@ -631,10 +962,9 @@
             if (selectedFilesList.length === 0) return alert("Please select at least one document checkbox.");
 
             downloadBtn.disabled = true;
-            btnText.innerText = "⏳ Processing Package...";
+            btnText.innerText = "⏳ Generating Documents...";
+            progressContainer.classList.remove('hidden');
             successMessage.classList.add('hidden');
-
-            startProgressBarAnimation();
 
             const formData = {};
             let borrowerVal = "";
@@ -671,8 +1001,6 @@
 
                 if (!response.ok) throw new Error("ZIP generation failed on server.");
 
-                completeProgressBarAnimation();
-
                 const blob = await response.blob();
                 const safeName = borrowerVal.replace(/[^A-Za-z0-9_]/g, '_');
 
@@ -690,11 +1018,10 @@
                 successMessage.classList.remove('hidden');
 
             } catch (err) {
-                clearInterval(progressInterval);
                 alert("Download Error: " + err.message);
             } finally {
                 downloadBtn.disabled = false;
-                btnText.innerText = "📥 Generate, Save Profile & Download Complete ZIP";
+                btnText.innerText = "📥 Generate, Save Profile & Download (.ZIP)";
                 setTimeout(() => { progressContainer.classList.add('hidden'); }, 3000);
             }
         }
