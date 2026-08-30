@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, send_file
 import os
 import io
 import re
+import json
 import shutil
 import tempfile
 import zipfile
@@ -10,6 +11,7 @@ from docxtpl import DocxTemplate
 app = Flask(__name__)
 
 DOCS_FOLDER = os.path.join(os.path.dirname(__file__), 'Docs')
+RATES_FILE = os.path.join(os.path.dirname(__file__), 'rates.json')
 
 def extract_placeholders(docx_path):
     try:
@@ -45,6 +47,32 @@ def get_docs():
                         "checked": False
                     })
     return jsonify(files_list)
+
+# API: Get Current Rates from Server (Global Sync)
+@app.route('/api/get-rates', methods=['GET'])
+def get_rates():
+    if os.path.exists(RATES_FILE):
+        try:
+            with open(RATES_FILE, 'r') as f:
+                return jsonify(json.load(f))
+        except Exception:
+            pass
+    return jsonify({"eblr": "9.25", "mclr": "8.60"})
+
+# API: Save New Rates Globally to Server
+@app.route('/api/save-rates', methods=['POST'])
+def save_rates():
+    try:
+        data = request.json or {}
+        eblr = str(data.get('eblr', '9.25')).strip()
+        mclr = str(data.get('mclr', '8.60')).strip()
+        
+        with open(RATES_FILE, 'w') as f:
+            json.dump({"eblr": eblr, "mclr": mclr}, f)
+            
+        return jsonify({"success": True, "eblr": eblr, "mclr": mclr})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 # API: Stable ZIP Generation (Pure DOCX)
 @app.route('/generate-complete-zip', methods=['POST'])
