@@ -124,3 +124,7 @@ def generate_complete_zip():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.route('/appraisal')
+def appraisal_page():
+    return render_template('appraisal.html')
