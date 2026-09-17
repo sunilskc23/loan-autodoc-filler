@@ -27,6 +27,10 @@ def extract_placeholders(docx_path):
 def home():
     return render_template('index.html')
 
+@app.route('/appraisal')
+def appraisal_page():
+    return render_template('appraisal.html')
+    
 # API: Templates aur Placeholders auto-load karne ke liye
 @app.route('/api/get-docs', methods=['GET'])
 def get_docs():
