@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Appraisal & Margin Calculator | Union Bank</title>
+    <script src="static/tailwindcss.js"></script>
+    <style>
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-card { border: 1px solid #cbd5e1 !important; background: white !important; color: black !important; }
+            .print-text-dark { color: #0f172a !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 min-h-screen text-slate-100 font-sans pb-12">
+
+    <!-- Header Banner -->
+    <header class="bg-indigo-900 border-b border-indigo-700/60 shadow-lg py-4 px-6 no-print">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">📊</span>
+                    <h1 class="text-xl sm:text-2xl font-black text-amber-300 tracking-wide">
+                        Loan Appraisal & Margin Assessor
+                    </h1>
+                    <span class="text-xs bg-indigo-950 text-indigo-200 border border-indigo-500 px-2 py-0.5 rounded-full font-semibold">Banking Pro</span>
+                </div>
+                <p class="text-xs text-indigo-200 mt-0.5">Project Cost, Term Loan, Working Capital & Vendor RTGS Disbursement Breakup</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-3 py-1.5 rounded-lg transition font-semibold">
+                    ← Back to LoanAutoDoc
+                </a>
+                <button onclick="window.print()" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg transition shadow">
+                    🖨️ Print / Save PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+
+        <!-- Top Input & Scheme Selection Card -->
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-4 no-print">
+            <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-3">
+                <h2 class="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                    <span>1. Proposal & Margin Parameters</span>
+                </h2>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400">Quick Scheme Preset:</span>
+                    <select id="schemePreset" onchange="applySchemePreset()" class="text-xs bg-slate-800 border border-slate-700 text-amber-300 rounded-lg p-1.5 font-semibold focus:ring-1 focus:ring-amber-500">
+                        <option value="CUSTOM">Custom Setup</option>
+                        <option value="PMEGP_SPECIAL">PMEGP (Special Cat. - 5% Margin)</option>
+                        <option value="PMEGP_GEN">PMEGP (Gen Cat. - 10% Margin)</option>
+                        <option value="PMFME">PMFME (10% Margin)</option>
+                        <option value="MUDRA_KISHORE">Mudra Kishore (10% - 15% Margin)</option>
+                        <option value="MUDRA_TARUN">Mudra Tarun (15% Margin)</option>
+                        <option value="UBI_SME">Standard SME / MSME (20% - 25%)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="text-[11px] font-bold text-slate-400 block mb-1">BORROWER / UNIT NAME</label>
+                    <input type="text" id="borrowerName" placeholder="e.g., M/s Sharma Enterprises" oninput="calculateAll()"
+                           class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-amber-300 font-semibold focus:ring-1 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-slate-400 block mb-1">LOAN SCHEME / FACILITY</label>
+                    <input type="text" id="loanSchemeName" placeholder="e.g., PMEGP Term Loan + WC" oninput="calculateAll()"
+                           class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-amber-300 font-semibold focus:ring-1 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-slate-400 block mb-1">SCHEME MARGIN MONEY (%)</label>
+                    <div class="relative">
+                        <input type="number" step="0.5" id="marginPercent" value="10" oninput="calculateAll()"
+                               class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-amber-300 font-bold focus:ring-1 focus:ring-amber-500">
+                        <span class="absolute right-3 top-2.5 text-xs text-slate-500 font-bold">%</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-slate-400 block mb-1">PROCESSING CHARGE (%) + 18% GST</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="relative">
+                            <input type="number" step="0.05" id="procFeePercent" value="0.50" oninput="calculateAll()"
+                                   class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-amber-300 font-bold focus:ring-1 focus:ring-amber-500">
+                            <span class="absolute right-2.5 top-2.5 text-xs text-slate-500 font-bold">%</span>
+                        </div>
+                        <div class="flex items-center text-[10.5px] text-slate-400 bg-slate-950 border border-slate-800 rounded-lg px-2">
+                            <span>+18% GST Auto</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2 Columns: Breakdown & Live Calculations -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- LEFT COLUMN: Quotations & Facility Cost Entitlement (col-span-7) -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- 1. Term Loan Component (Assets / Machinery Quotation) -->
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
+                            <span>🏭 1. Capital Expenditure / Term Loan Component (Machinery / Shed / Vehicle)</span>
+                        </h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 block mb-1">QUOTATION / INVOICE VALUE (₹)</label>
+                            <input type="number" id="quotationAmt" value="500000" oninput="calculateAll()"
+                                   class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-amber-300 font-bold focus:ring-1 focus:ring-amber-500">
+                            <span id="quotationWords" class="text-[10px] text-slate-400 block mt-1 italic"></span>
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 block mb-1">VENDOR / BENEFICIARY NAME</label>
+                            <input type="text" id="vendorName" placeholder="e.g., M/s Modern Machinery Works" oninput="calculateAll()"
+                                   class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-slate-200 font-medium focus:ring-1 focus:ring-amber-500">
+                        </div>
+                    </div>
+
+                    <!-- Term loan sub calculation pills -->
+                    <div class="grid grid-cols-3 gap-2 pt-2 text-center text-xs">
+                        <div class="p-2.5 bg-slate-950/80 border border-slate-800 rounded-xl">
+                            <span class="text-[10px] text-slate-400 block">TL Requirement</span>
+                            <span id="tlLoanAmtBadge" class="font-bold text-emerald-400 text-sm">₹0</span>
+                        </div>
+                        <div class="p-2.5 bg-slate-950/80 border border-slate-800 rounded-xl">
+                            <span class="text-[10px] text-slate-400 block">TL Margin Share</span>
+                            <span id="tlMarginAmtBadge" class="font-bold text-amber-400 text-sm">₹0</span>
+                        </div>
+                        <div class="p-2.5 bg-slate-950/80 border border-slate-800 rounded-xl">
+                            <span class="text-[10px] text-slate-400 block">Asset Cost</span>
+                            <span id="tlAssetCostBadge" class="font-bold text-slate-200 text-sm">₹0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Working Capital Component (Optional / Composite) -->
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <h3 class="text-xs font-bold text-purple-300 uppercase tracking-wider flex items-center gap-1.5">
+                            <span>📦 2. Working Capital Component (Cash Credit / Working Capital Term Loan)</span>
+                        </h3>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-xs text-slate-300 select-none">
+                            <input type="checkbox" id="includeWc" checked onchange="toggleWcVisibility()" class="rounded text-indigo-600">
+                            <span>Include WC in Proposal</span>
+                        </label>
+                    </div>
+
+                    <div id="wcInputsArea" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 block mb-1">WORKING CAPITAL REQUIREMENT (TOTAL) (₹)</label>
+                                <input type="number" id="wcRequirementAmt" value="200000" oninput="calculateAll()"
+                                       class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-amber-300 font-bold focus:ring-1 focus:ring-amber-500">
+                                <span id="wcWords" class="text-[10px] text-slate-400 block mt-1 italic"></span>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 block mb-1">FACILITY TYPE</label>
+                                <select id="wcFacilityType" onchange="calculateAll()"
+                                        class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-slate-200 font-semibold focus:ring-1 focus:ring-amber-500">
+                                    <option value="Cash Credit (Hypothecation)">Cash Credit (Hypothecation)</option>
+                                    <option value="Working Capital Term Loan">Working Capital Term Loan</option>
+                                    <option value="Demand Loan">Demand Loan</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- WC sub calculation pills -->
+                        <div class="grid grid-cols-3 gap-2 pt-2 text-center text-xs">
+                            <div class="p-2.5 bg-slate-950/80 border border-slate-800 rounded-xl">
+                                <span class="text-[10px] text-slate-400 block">WC Bank Loan</span>
+                                <span id="wcBankLoanBadge" class="font-bold text-emerald-400 text-sm">₹0</span>
+                            </div>
+                            <div class="p-2.5 bg-slate-950/80 border border-slate-800 rounded-xl">
+                                <span class="text-[10px] text-slate-400 block">WC Margin Share</span>
+                                <span id="wcMarginAmtBadge" class="font-bold text-amber-400 text-sm">₹0</span>
+                            </div>
+                            <div class="p-2.5 bg-slate-950/80 border border-slate-800 rounded-xl">
+                                <span class="text-[10px] text-slate-400 block">Total WC Cost</span>
+                                <span id="wcTotalCostBadge" class="font-bold text-slate-200 text-sm">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Processing Charge Breakdown (Net Deduction Logic) -->
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <h3 class="text-xs font-bold text-rose-300 uppercase tracking-wider flex items-center gap-1.5">
+                            <span>💸 3. Processing Charges & Upfront Deductions</span>
+                        </h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl">
+                            <span class="text-[10px] text-slate-400 block">Base Processing Fee</span>
+                            <span id="baseProcFeeBadge" class="font-bold text-rose-300 text-sm">₹0</span>
+                        </div>
+                        <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl">
+                            <span class="text-[10px] text-slate-400 block">GST @ 18%</span>
+                            <span id="gstFeeBadge" class="font-bold text-rose-300 text-sm">₹0</span>
+                        </div>
+                        <div class="p-3 bg-slate-950 border border-rose-900/60 rounded-xl">
+                            <span class="text-[10px] text-slate-400 block font-semibold text-rose-200">Total Deduction at Disbursement</span>
+                            <span id="totalDeductionBadge" class="font-bold text-rose-400 text-sm">₹0</span>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 italic">
+                        * Note: Yeh amount Term Loan disburse hote hi loan account se debit ho jata hai, jisse net loan credit kam hota hai aur borrower ko itna difference margin me add karke dena hota hai.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Final Sanction Summary & Vendor RTGS Sheet (col-span-5) -->
+            <div class="lg:col-span-5 space-y-6">
+
+                <!-- Final Appraisal Card (Printable) -->
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-2xl space-y-4 print-card">
+                    <div class="border-b border-slate-800 pb-3">
+                        <span class="text-[10px] font-bold bg-indigo-900/60 text-indigo-200 border border-indigo-700/60 px-2 py-0.5 rounded uppercase">
+                            Appraisal Summary
+                        </span>
+                        <h2 class="text-base font-extrabold text-white mt-1.5 print-text-dark" id="summaryHeaderBorrower">
+                            Loan Appraisal Assessment
+                        </h2>
+                        <p class="text-xs text-slate-400" id="summaryHeaderScheme">Scheme: Custom Setup</p>
+                    </div>
+
+                    <!-- Big Totals Box -->
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between items-center py-1 border-b border-slate-800">
+                            <span class="text-slate-400">Total Project Cost:</span>
+                            <span id="sumProjectCost" class="font-bold text-slate-100 text-sm">₹0</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1 border-b border-slate-800">
+                            <span class="text-slate-400">Total Bank Loan Sanctioned:</span>
+                            <span id="sumTotalLoan" class="font-bold text-emerald-400 text-base">₹0</span>
+                        </div>
+                        <div class="pl-3 space-y-1 text-[11px] text-slate-400 border-b border-slate-800 pb-2">
+                            <div class="flex justify-between">
+                                <span>• Term Loan (Capital Asset):</span>
+                                <span id="sumTermLoan" class="font-semibold text-slate-200">₹0</span>
+                            </div>
+                            <div class="flex justify-between" id="sumWcRow">
+                                <span>• Working Capital Loan:</span>
+                                <span id="sumWcLoan" class="font-semibold text-slate-200">₹0</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center py-1 border-b border-slate-800">
+                            <span class="text-slate-400">Total Borrower Margin Money:</span>
+                            <span id="sumTotalMargin" class="font-bold text-amber-300 text-sm">₹0</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1 border-b border-slate-800">
+                            <span class="text-slate-400">Processing Fee + GST:</span>
+                            <span id="sumProcFee" class="font-semibold text-rose-300">₹0</span>
+                        </div>
+                    </div>
+
+                    <!-- VENDOR RTGS DISBURSEMENT ADVICE (The Exact Problem Solver) -->
+                    <div class="p-4 bg-slate-950 border border-amber-900/50 rounded-xl space-y-2.5">
+                        <div class="border-b border-slate-800 pb-1.5 flex justify-between items-center">
+                            <span class="text-xs font-bold text-amber-300 uppercase tracking-wide">
+                                ⚡ Vendor RTGS / NEFT Clearance Advice
+                            </span>
+                            <span class="text-[9px] bg-amber-950 text-amber-300 border border-amber-800 px-1.5 py-0.5 rounded font-bold">100% Invoice</span>
+                        </div>
+
+                        <div class="space-y-1.5 text-xs">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Vendor Invoice / RTGS Required:</span>
+                                <span id="rtgsTargetAmt" class="font-bold text-white">₹0</span>
+                            </div>
+                            <div class="flex justify-between text-emerald-400">
+                                <span>Less: Net Term Loan Disbursed:</span>
+                                <span id="rtgsNetLoanDisbursed" class="font-bold">(-) ₹0</span>
+                            </div>
+                            <div class="flex justify-between text-[11px] text-slate-500 pl-2">
+                                <span>(Term Loan: <span id="rtgsGrossLoan">₹0</span> - Fees: <span id="rtgsFeesDeducted">₹0</span>)</span>
+                            </div>
+                            <div class="flex justify-between text-amber-300 font-bold border-t border-slate-800 pt-2 text-sm">
+                                <span>Customer Cash Required in Account:</span>
+                                <span id="rtgsCustomerDepositRequired">₹0</span>
+                            </div>
+                        </div>
+                        <div class="p-2 bg-slate-900/90 rounded-lg text-[10.5px] text-slate-300 border border-slate-800 space-y-1">
+                            <p class="font-semibold text-amber-200">📌 Branch Action Protocol:</p>
+                            <p>1. Customer ko bolna hai ki woh savings/operative account mein <strong><span id="rtgsActionCustomerDeposit">₹0</span></strong> deposit karein (jo ki actual Margin + Processing Charges ke barabar hai).</p>
+                            <p>2. Term Loan disburse hone par charges cut hone ke baad account balance exact <strong><span id="rtgsActionInvoiceTotal">₹0</span></strong> banega, jisse vendor ko 1-shot RTGS clear ho jayega.</p>
+                        </div>
+                    </div>
+
+                    <!-- Words Format Box (Pure Words without "Rupees") -->
+                    <div class="p-3 bg-slate-950/80 border border-slate-800 rounded-xl space-y-1 text-[11px]">
+                        <span class="font-bold text-slate-400 block uppercase text-[10px]">Loan Amount in Words (No "Rupees" word):</span>
+                        <p id="totalLoanWords" class="text-amber-300 font-semibold italic">Zero Only</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // INDIAN NUMBER TO WORDS CONVERTER (STRICTLY WITHOUT "RUPEES")
+        function numberToWordsIndianClean(num) {
+            num = parseFloat(num.toString().replace(/,/g, ''));
+            if (isNaN(num) || num <= 0) return "Zero Only";
+
+            const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+            const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+            function inWords(n) {
+                if (n === 0) return '';
+                if (n < 20) return a[n];
+                const digit = n % 10;
+                if (n < 100) return b[Math.floor(n / 10)] + (digit ? ' ' + a[digit] : ' ');
+                if (n < 1000) return a[Math.floor(n / 100)] + 'Hundred ' + (n % 100 !== 0 ? 'and ' + inWords(n % 100) : '');
+                if (n < 100000) return inWords(Math.floor(n / 1000)) + 'Thousand ' + inWords(n % 1000);
+                if (n < 10000000) return inWords(Math.floor(n / 100000)) + 'Lakh ' + inWords(n % 100000);
+                return inWords(Math.floor(n / 10000000)) + 'Crore ' + inWords(n % 10000000);
+            }
+
+            const whole = Math.floor(num);
+            const fraction = Math.round((num - whole) * 100);
+            let str = inWords(whole).trim(); // NO "Rupees" word included
+            if (fraction > 0) {
+                str += " and " + inWords(fraction).trim() + " Paise";
+            }
+            return str ? (str + " Only") : "Zero Only";
+        }
+
+        // INDIAN CURRENCY FORMATTER
+        function formatInr(val) {
+            if (isNaN(val) || val === null) return "₹0";
+            let clean = Math.round(val).toString();
+            let lastThree = clean.substring(clean.length - 3);
+            let otherNumbers = clean.substring(0, clean.length - 3);
+            if (otherNumbers !== '') lastThree = ',' + lastThree;
+            return "₹" + otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+        }
+
+        function applySchemePreset() {
+            const val = document.getElementById('schemePreset').value;
+            const marginInput = document.getElementById('marginPercent');
+            const schemeNameInput = document.getElementById('loanSchemeName');
+
+            if (val === 'PMEGP_SPECIAL') {
+                marginInput.value = "5";
+                schemeNameInput.value = "PMEGP (Special Category - 5% Margin)";
+            } else if (val === 'PMEGP_GEN') {
+                marginInput.value = "10";
+                schemeNameInput.value = "PMEGP (General Category - 10% Margin)";
+            } else if (val === 'PMFME') {
+                marginInput.value = "10";
+                schemeNameInput.value = "PMFME Scheme (10% Margin)";
+            } else if (val === 'MUDRA_KISHORE') {
+                marginInput.value = "10";
+                schemeNameInput.value = "Pradhan Mantri Mudra Yojana (Kishore)";
+            } else if (val === 'MUDRA_TARUN') {
+                marginInput.value = "15";
+                schemeNameInput.value = "Pradhan Mantri Mudra Yojana (Tarun)";
+            } else if (val === 'UBI_SME') {
+                marginInput.value = "20";
+                schemeNameInput.value = "Union Bank Commercial MSME Scheme";
+            }
+            calculateAll();
+        }
+
+        function toggleWcVisibility() {
+            const includeWc = document.getElementById('includeWc').checked;
+            const area = document.getElementById('wcInputsArea');
+            const row = document.getElementById('sumWcRow');
+            if (includeWc) {
+                area.classList.remove('hidden');
+                row.classList.remove('hidden');
+            } else {
+                area.classList.add('hidden');
+                row.classList.add('hidden');
+            }
+            calculateAll();
+        }
+
+        function calculateAll() {
+            const borrower = document.getElementById('borrowerName').value.trim() || "Borrower / Unit";
+            const scheme = document.getElementById('loanSchemeName').value.trim() || "Loan Facility Assessment";
+            const marginPct = parseFloat(document.getElementById('marginPercent').value || "0") / 100;
+            const procFeePct = parseFloat(document.getElementById('procFeePercent').value || "0") / 100;
+
+            const quotationVal = parseFloat(document.getElementById('quotationAmt').value || "0");
+            const includeWc = document.getElementById('includeWc').checked;
+            const wcVal = includeWc ? parseFloat(document.getElementById('wcRequirementAmt').value || "0") : 0;
+
+            // 1. Term Loan Component
+            const tlMargin = quotationVal * marginPct;
+            const tlLoan = quotationVal - tlMargin;
+
+            // 2. Working Capital Component
+            const wcMargin = wcVal * marginPct;
+            const wcLoan = wcVal - wcMargin;
+
+            // 3. Totals
+            const totalProjectCost = quotationVal + wcVal;
+            const totalBankLoan = tlLoan + wcLoan;
+            const totalMarginMoney = tlMargin + wcMargin;
+
+            // 4. Processing Charges (Calculated on Total Sanctioned Term Loan or Total Loan)
+            const baseProcFee = tlLoan * procFeePct;
+            const gstFee = baseProcFee * 0.18;
+            const totalProcDeduction = baseProcFee + gstFee;
+
+            // 5. Vendor RTGS Advice Logic
+            const netTlDisbursed = tlLoan - totalProcDeduction;
+            const customerDepositNeeded = quotationVal - netTlDisbursed; // Margin + Processing fee
+
+            // Update UI: Badges
+            document.getElementById('tlLoanAmtBadge').innerText = formatInr(tlLoan);
+            document.getElementById('tlMarginAmtBadge').innerText = formatInr(tlMargin);
+            document.getElementById('tlAssetCostBadge').innerText = formatInr(quotationVal);
+
+            document.getElementById('wcBankLoanBadge').innerText = formatInr(wcLoan);
+            document.getElementById('wcMarginAmtBadge').innerText = formatInr(wcMargin);
+            document.getElementById('wcTotalCostBadge').innerText = formatInr(wcVal);
+
+            document.getElementById('baseProcFeeBadge').innerText = formatInr(baseProcFee);
+            document.getElementById('gstFeeBadge').innerText = formatInr(gstFee);
+            document.getElementById('totalDeductionBadge').innerText = formatInr(totalProcDeduction);
+
+            // Update Summary Card
+            document.getElementById('summaryHeaderBorrower').innerText = borrower;
+            document.getElementById('summaryHeaderScheme').innerText = `Scheme: ${scheme} (Margin: ${(marginPct * 100).toFixed(1)}%)`;
+
+            document.getElementById('sumProjectCost').innerText = formatInr(totalProjectCost);
+            document.getElementById('sumTotalLoan').innerText = formatInr(totalBankLoan);
+            document.getElementById('sumTermLoan').innerText = formatInr(tlLoan);
+            document.getElementById('sumWcLoan').innerText = formatInr(wcLoan);
+            document.getElementById('sumTotalMargin').innerText = formatInr(totalMarginMoney);
+            document.getElementById('sumProcFee').innerText = formatInr(totalProcDeduction);
+
+            // Vendor RTGS Advice Update
+            document.getElementById('rtgsTargetAmt').innerText = formatInr(quotationVal);
+            document.getElementById('rtgsNetLoanDisbursed').innerText = "(-) " + formatInr(netTlDisbursed);
+            document.getElementById('rtgsGrossLoan').innerText = formatInr(tlLoan);
+            document.getElementById('rtgsFeesDeducted').innerText = formatInr(totalProcDeduction);
+            document.getElementById('rtgsCustomerDepositRequired').innerText = formatInr(customerDepositNeeded);
+
+            document.getElementById('rtgsActionCustomerDeposit').innerText = formatInr(customerDepositNeeded);
+            document.getElementById('rtgsActionInvoiceTotal').innerText = formatInr(quotationVal);
+
+            // Words Format (Pure Words, NO "Rupees")
+            document.getElementById('quotationWords').innerText = quotationVal > 0 ? numberToWordsIndianClean(quotationVal) : "";
+            document.getElementById('wcWords').innerText = wcVal > 0 ? numberToWordsIndianClean(wcVal) : "";
+            document.getElementById('totalLoanWords').innerText = numberToWordsIndianClean(totalBankLoan);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            calculateAll();
+        });
+    </script>
+</body>
+</html>
