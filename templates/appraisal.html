@@ -43,6 +43,11 @@
                 <a href="/" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-3.5 py-2 rounded-lg transition font-semibold">
                     ← Back to LoanAutoDoc
                 </a>
+                <!-- Clear / Reset Button -->
+                <button type="button" onclick="resetAppraisalForm()" class="text-xs bg-rose-700 hover:bg-rose-600 text-white font-bold px-3.5 py-2 rounded-lg transition shadow flex items-center gap-1.5">
+                    <span>🔄</span>
+                    <span>Clear All</span>
+                </button>
                 <button onclick="window.print()" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-lg transition shadow flex items-center gap-1.5">
                     <span>🖨️</span>
                     <span>Print 1-Page Appraisal</span>
@@ -618,6 +623,31 @@
             }
             calculateAssessment();
         });
+        // CLEAR / RESET ALL FORM INPUTS AND SUMMARY
+        function resetAppraisalForm() {
+            if (!confirm("Are you sure you want to clear all entered details?")) return;
+
+            // Text Inputs Clear
+            document.getElementById('borrowerName').value = "";
+            document.getElementById('loanSchemeName').value = "";
+            document.getElementById('vendorName').value = "";
+            
+            // Numeric Values Reset
+            document.getElementById('quotationAmt').value = "";
+            document.getElementById('desiredLoanAmt').value = "";
+            document.getElementById('reverseTlDesiredAmt').value = "";
+            document.getElementById('wcRequirementAmt').value = "";
+            
+            // Defaults
+            document.getElementById('schemePreset').value = "CUSTOM";
+            document.getElementById('marginPercent').value = "10";
+            document.getElementById('procFeePercent').value = "1.30";
+            document.getElementById('includeWc').checked = true;
+            document.getElementById('absorbTotalMarginInTl').checked = true;
+
+            // Recalculate to update empty states
+            calculateAssessment();
+        }
     </script>
 </body>
 </html>
