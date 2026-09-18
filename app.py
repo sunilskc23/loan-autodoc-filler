@@ -27,10 +27,11 @@ def extract_placeholders(docx_path):
 def home():
     return render_template('index.html')
 
+# Appraisal Page Route
 @app.route('/appraisal')
 def appraisal_page():
     return render_template('appraisal.html')
-    
+
 # API: Templates aur Placeholders auto-load karne ke liye
 @app.route('/api/get-docs', methods=['GET'])
 def get_docs():
@@ -92,7 +93,6 @@ def generate_complete_zip():
     zip_buffer = io.BytesIO()
 
     try:
-        # Unfilled values ko blank line se replace karna
         render_context = {k: (v if v and str(v).strip() else "______________________") for k, v in form_data.items()}
 
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as master_zip:
@@ -101,15 +101,11 @@ def generate_complete_zip():
                     if file in selected_docs:
                         src_path = os.path.join(root, file)
                         doc = DocxTemplate(src_path)
-                        
-                        # Native safe Jinja rendering
                         doc.render(render_context)
                         
-                        # Save filled DOCX
                         filled_docx_path = os.path.join(temp_dir, file)
                         doc.save(filled_docx_path)
                         
-                        # Add filled DOCX to ZIP
                         with open(filled_docx_path, 'rb') as f:
                             master_zip.writestr(f"Word_Files/{file}", f.read())
 
@@ -128,7 +124,3 @@ def generate_complete_zip():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-@app.route('/appraisal')
-def appraisal_page():
-    return render_template('appraisal.html')
