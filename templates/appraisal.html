@@ -298,7 +298,6 @@
                         <!-- HIGHLIGHTED PROFESSIONAL POINT NO. 4: BANK LOAN SANCTION BREAKDOWN (FIGURES & WORDS) -->
                         <div class="p-4 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/30 border-2 border-emerald-500/50 rounded-2xl space-y-3 shadow-lg print-border print-bg-light">
                             
-                            <!-- Main Total Sanction Header & Big Figure -->
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1.5 border-b border-emerald-500/30 pb-2.5 print-border">
                                 <div class="max-w-[65%]">
                                     <span class="font-black text-emerald-400 text-xs tracking-wider uppercase flex items-center gap-1.5 print-text-dark">
@@ -315,10 +314,8 @@
                                 </div>
                             </div>
 
-                            <!-- Facility Wise Breakup Cards with Figures & Words -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-0.5">
                                 
-                                <!-- Term Loan Sub-Card -->
                                 <div class="p-3 bg-slate-950/90 border border-slate-800 rounded-xl space-y-1 print-border">
                                     <div class="flex justify-between items-center">
                                         <span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide flex items-center gap-1 print-text-dark">
@@ -333,7 +330,6 @@
                                     </p>
                                 </div>
 
-                                <!-- Working Capital Sub-Card -->
                                 <div class="p-3 bg-slate-950/90 border border-slate-800 rounded-xl space-y-1 print-border" id="rowSumWcLoan">
                                     <div class="flex justify-between items-center">
                                         <span class="text-[11px] font-bold text-purple-300 uppercase tracking-wide flex items-center gap-1 print-text-dark">
@@ -364,16 +360,16 @@
                         </div>
                     </div>
 
-                    <!-- VENDOR RTGS & ACCOUNT DEPOSIT PROTOCOL -->
+                    <!-- VENDOR RTGS & ACCOUNT DEPOSIT PROTOCOL (DYNAMIC POINT C BREAKDOWN) -->
                     <div class="p-4 bg-slate-950 border-2 border-amber-500/40 rounded-xl space-y-3 print-border">
                         <div class="flex justify-between items-center border-b border-slate-800 pb-1.5 print-border">
                             <span class="text-xs font-black text-amber-300 uppercase tracking-wide print-text-dark">
                                 ⚡ Vendor RTGS & Customer Cash Deposit Advice
                             </span>
-                            <span class="text-[10px] bg-amber-950 text-amber-300 border border-amber-700 px-2 py-0.5 rounded font-bold">100% Invoice Clearance</span>
+                            <span id="protocolBadgeMode" class="text-[10px] bg-amber-950 text-amber-300 border border-amber-700 px-2 py-0.5 rounded font-bold">100% Invoice Clearance</span>
                         </div>
 
-                        <div class="space-y-2 text-xs">
+                        <div class="space-y-2.5 text-xs">
                             <div class="flex justify-between">
                                 <span class="text-slate-400 font-medium print-text-dark">A. Vendor Invoice / RTGS Transfer Amount:</span>
                                 <span id="rtgsInvoiceTarget" class="font-extrabold text-white text-sm print-text-dark">₹6,84,210</span>
@@ -386,21 +382,29 @@
                                 <span>(Gross TL: <span id="rtgsGrossTl">₹6,50,000</span> - Processing Fee: <span id="rtgsProcDeducted">₹9,971</span>)</span>
                             </div>
                             
-                            <!-- Customer Cash Required in Account -->
-                            <div class="flex justify-between items-center text-amber-300 font-black border-t border-slate-800 pt-2 text-sm bg-amber-950/40 p-2.5 rounded-lg print-text-dark print-border">
-                                <span>C. Total Cash Borrower Must Deposit in Account:</span>
-                                <span id="rtgsCustomerDepositRequired" class="text-base text-yellow-300">₹57,339</span>
+                            <!-- Detailed Formula Breakdown for Customer Cash Deposit (Point C) -->
+                            <div class="border-t border-slate-800 pt-2.5 bg-amber-950/40 p-3 rounded-xl border border-amber-500/30 print-border print-bg-light space-y-1.5">
+                                <div class="flex justify-between items-center text-amber-300 font-black text-sm print-text-dark">
+                                    <span id="customerDepositTitle">C. Total Cash Borrower Must Deposit in Account:</span>
+                                    <span id="rtgsCustomerDepositRequired" class="text-base text-yellow-300">₹57,339</span>
+                                </div>
+                                
+                                <!-- Precise Math Traceability Line -->
+                                <div class="flex flex-wrap items-center justify-between text-[11.5px] text-amber-200/90 font-mono bg-slate-950/80 px-2.5 py-1 rounded-lg border border-slate-800 print-border print-text-dark">
+                                    <span id="depositBreakdownFormula">₹47,368 (Full Margin) + ₹9,971 (Proc Fee)</span>
+                                    <span class="font-bold text-white print-text-dark">= <span id="depositBreakdownTotal">₹57,339</span></span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Operational Protocol -->
+                        <!-- Operational Protocol Explanation -->
                         <div class="p-2.5 bg-slate-900 rounded-lg text-[11.5px] text-slate-300 border border-slate-800 space-y-1 print-border print-text-dark">
                             <p class="font-bold text-amber-200">📌 Operational Execution & Audit Note:</p>
                             <p id="auditExplanationText">
-                                • Borrower must deposit <strong><span id="protocolDepositAmt">₹57,339</span></strong> (comprising <strong>₹47,368</strong> Full Project Margin + <strong>₹9,971</strong> Upfront Fees).
+                                • Borrower must deposit <strong>₹57,339</strong> (Full Scheme Project Margin of <strong>₹47,368</strong> + Upfront Fees of <strong>₹9,971</strong>).
                             </p>
-                            <p>
-                                • After Term Loan disbursement & processing fee debit, vendor RTGS of <strong><span id="protocolInvoiceAmt">₹6,84,210</span></strong> will clear seamlessly. Remaining balance remains safely parked as WC margin.
+                            <p id="auditSecondLineText">
+                                • After Term Loan disbursement & processing fee debit, vendor RTGS of <strong>₹6,84,210</strong> will clear seamlessly. Remaining balance remains safely parked as WC margin.
                             </p>
                         </div>
                     </div>
@@ -619,12 +623,19 @@
             const totalProcDeduction = baseProcFee + gstProcFee;
             const netTlDisbursed = tlLoanSanction - totalProcDeduction;
 
-            // Audit-Proof Deposit Calculation
+            // Audit-Proof Deposit Calculation (Checked vs Unchecked)
             let customerDepositRequired = 0;
+            let activeMarginComponent = 0;
+            let marginLabel = "";
+
             if (absorbTotalMarginInTl && includeWc) {
-                customerDepositRequired = totalMarginMoney + totalProcDeduction;
+                activeMarginComponent = totalMarginMoney;
+                customerDepositRequired = activeMarginComponent + totalProcDeduction;
+                marginLabel = "Full Project Margin";
             } else {
-                customerDepositRequired = tlMarginShare + totalProcDeduction;
+                activeMarginComponent = tlMarginShare;
+                customerDepositRequired = activeMarginComponent + totalProcDeduction;
+                marginLabel = "Term Loan Margin";
             }
 
             // Update UI - Header & Badges
@@ -642,7 +653,7 @@
             document.getElementById('sumWcValue').innerText = formatInr(wcProjectAmt);
             document.getElementById('sumTotalProjectCost').innerText = formatInr(totalProjectCost);
 
-            // Point 4: Highlighted Loan Sanction & Breakup Display (Both Figure and Words)
+            // Point 4: Loan Sanction & Breakup Display
             document.getElementById('sumTotalLoanSanction').innerText = formatInr(totalLoanSanction) + "/-";
             document.getElementById('sumTotalLoanSanctionWords').innerText = totalLoanSanction > 0 ? numberToWordsIndianClean(totalLoanSanction) : "Zero Only";
             
@@ -663,14 +674,23 @@
             document.getElementById('rtgsProcDeducted').innerText = formatInr(totalProcDeduction);
             document.getElementById('rtgsCustomerDepositRequired').innerText = formatInr(customerDepositRequired);
 
-            // Operational Execution Note
-            document.getElementById('protocolDepositAmt').innerText = formatInr(customerDepositRequired);
-            document.getElementById('protocolInvoiceAmt').innerText = formatInr(invoiceAmt);
-            const auditText = document.getElementById('auditExplanationText');
+            // Point C: Dynamic Formula Traceability Line
+            document.getElementById('depositBreakdownFormula').innerText = `${formatInr(activeMarginComponent)} (${marginLabel}) + ${formatInr(totalProcDeduction)} (Processing Fee)`;
+            document.getElementById('depositBreakdownTotal').innerText = formatInr(customerDepositRequired);
+
+            // Operational Execution Note & Protocol Badge Update
+            const badgeEl = document.getElementById('protocolBadgeMode');
+            const auditFirstLine = document.getElementById('auditExplanationText');
+            const auditSecondLine = document.getElementById('auditSecondLineText');
+
             if (absorbTotalMarginInTl && includeWc) {
-                auditText.innerHTML = `• Borrower must deposit <strong>${formatInr(customerDepositRequired)}</strong> (Full Scheme Project Margin of <strong>${formatInr(totalMarginMoney)}</strong> + Upfront Fees of <strong>${formatInr(totalProcDeduction)}</strong>).`;
+                if (badgeEl) badgeEl.innerText = "100% Invoice Clearance (Full Margin)";
+                auditFirstLine.innerHTML = `• Borrower must deposit <strong>${formatInr(customerDepositRequired)}</strong> (Full Scheme Project Margin of <strong>${formatInr(totalMarginMoney)}</strong> + Upfront Fees of <strong>${formatInr(totalProcDeduction)}</strong>).`;
+                auditSecondLine.innerHTML = `• After Term Loan disbursement & processing fee debit, vendor RTGS of <strong>${formatInr(invoiceAmt)}</strong> will clear seamlessly. Remaining balance remains safely parked as WC margin.`;
             } else {
-                auditText.innerHTML = `• Borrower must deposit <strong>${formatInr(customerDepositRequired)}</strong> (Term Loan Margin of <strong>${formatInr(tlMarginShare)}</strong> + Upfront Fees of <strong>${formatInr(totalProcDeduction)}</strong>).`;
+                if (badgeEl) badgeEl.innerText = "TL Clearance Only (Partial Margin)";
+                auditFirstLine.innerHTML = `• Borrower must deposit <strong>${formatInr(customerDepositRequired)}</strong> (Term Loan Specific Margin of <strong>${formatInr(tlMarginShare)}</strong> + Upfront Fees of <strong>${formatInr(totalProcDeduction)}</strong>).`;
+                auditSecondLine.innerHTML = `• Only Term Loan margin is recovered now for vendor invoice clearance of <strong>${formatInr(invoiceAmt)}</strong>. Working Capital margin of <strong>${formatInr(wcMarginShare)}</strong> must be brought in separately prior to CC limit operation.`;
             }
         }
 
