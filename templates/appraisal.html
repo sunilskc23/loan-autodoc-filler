@@ -21,6 +21,7 @@
             .print-card { border: 1.5px solid #334155 !important; background: white !important; color: black !important; box-shadow: none !important; }
             .print-text-dark { color: #0f172a !important; }
             .print-border { border-color: #cbd5e1 !important; }
+            .print-bg-light { background-color: #f8fafc !important; }
         }
     </style>
 </head>
@@ -43,7 +44,6 @@
                 <a href="/" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-3.5 py-2 rounded-lg transition font-semibold">
                     ← Back to LoanAutoDoc
                 </a>
-                <!-- Clear / Reset Button -->
                 <button type="button" onclick="resetAppraisalForm()" class="text-xs bg-rose-700 hover:bg-rose-600 text-white font-bold px-3.5 py-2 rounded-lg transition shadow flex items-center gap-1.5 cursor-pointer">
                     <span>🔄</span>
                     <span>Clear All</span>
@@ -278,7 +278,7 @@
                     </div>
 
                     <!-- Financial Summary Table -->
-                    <div class="space-y-2.5 text-xs">
+                    <div class="space-y-3 text-xs">
                         
                         <div class="flex justify-between items-center py-1.5 border-b border-slate-800 print-border">
                             <span class="text-slate-400 font-medium print-text-dark">1. Required Asset Invoice / Quotation Value:</span>
@@ -290,26 +290,64 @@
                             <span id="sumWcValue" class="font-extrabold text-slate-100 text-sm print-text-dark">₹2,63,158</span>
                         </div>
 
-                        <div class="flex justify-between items-center py-2 bg-slate-950/90 px-3 rounded-lg border border-slate-800 print-border">
+                        <div class="flex justify-between items-center py-2 bg-slate-950/90 px-3.5 rounded-xl border border-slate-800 print-border print-bg-light">
                             <span class="text-slate-300 font-bold print-text-dark">3. Total Project Cost (1 + 2):</span>
                             <span id="sumTotalProjectCost" class="font-black text-amber-300 text-base print-text-dark">₹9,47,368</span>
                         </div>
 
-                        <!-- Bank Loan Sanction Breakdown -->
-                        <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2 print-border">
-                            <div class="flex justify-between items-center border-b border-slate-800 pb-1.5 print-border">
-                                <span class="font-bold text-emerald-400 text-xs uppercase tracking-wide print-text-dark">4. BANK LOAN SANCTION AMOUNT:</span>
-                                <span id="sumTotalLoanSanction" class="font-black text-emerald-400 text-base print-text-dark">₹9,00,000</span>
+                        <!-- HIGHLIGHTED PROFESSIONAL POINT NO. 4: BANK LOAN SANCTION BREAKDOWN (FIGURES & WORDS) -->
+                        <div class="p-4 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/30 border-2 border-emerald-500/50 rounded-2xl space-y-3 shadow-lg print-border print-bg-light">
+                            
+                            <!-- Main Total Sanction Header & Big Figure -->
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1.5 border-b border-emerald-500/30 pb-2.5 print-border">
+                                <div class="max-w-[65%]">
+                                    <span class="font-black text-emerald-400 text-xs tracking-wider uppercase flex items-center gap-1.5 print-text-dark">
+                                        <span>🏦</span> 4. BANK LOAN SANCTION AMOUNT
+                                    </span>
+                                    <p id="sumTotalLoanSanctionWords" class="text-[11px] text-emerald-200/90 font-semibold italic mt-0.5 leading-snug print-text-dark">
+                                        Nine Lakh Only
+                                    </p>
+                                </div>
+                                <div class="text-left sm:text-right">
+                                    <span id="sumTotalLoanSanction" class="font-black text-emerald-300 text-xl tracking-tight drop-shadow-sm print-text-dark">
+                                        ₹9,00,000/-
+                                    </span>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-2 text-[11.5px] text-slate-300 print-text-dark">
-                                <div class="flex justify-between">
-                                    <span>• Term Loan Sanction:</span>
-                                    <span id="sumTlLoanSanction" class="font-bold text-slate-100">₹6,50,000</span>
+
+                            <!-- Facility Wise Breakup Cards with Figures & Words -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-0.5">
+                                
+                                <!-- Term Loan Sub-Card -->
+                                <div class="p-3 bg-slate-950/90 border border-slate-800 rounded-xl space-y-1 print-border">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide flex items-center gap-1 print-text-dark">
+                                            <span>🏭</span> Term Loan
+                                        </span>
+                                        <span id="sumTlLoanSanction" class="font-black text-white text-sm print-text-dark">
+                                            ₹6,50,000/-
+                                        </span>
+                                    </div>
+                                    <p id="sumTlWords" class="text-[10px] text-indigo-200/80 font-medium italic leading-tight print-text-dark min-h-[14px]">
+                                        Six Lakh Fifty Thousand Only
+                                    </p>
                                 </div>
-                                <div class="flex justify-between" id="rowSumWcLoan">
-                                    <span>• Working Capital Sanction:</span>
-                                    <span id="sumWcLoanSanction" class="font-bold text-slate-100">₹2,50,000</span>
+
+                                <!-- Working Capital Sub-Card -->
+                                <div class="p-3 bg-slate-950/90 border border-slate-800 rounded-xl space-y-1 print-border" id="rowSumWcLoan">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[11px] font-bold text-purple-300 uppercase tracking-wide flex items-center gap-1 print-text-dark">
+                                            <span>📦</span> Working Capital
+                                        </span>
+                                        <span id="sumWcLoanSanction" class="font-black text-white text-sm print-text-dark">
+                                            ₹2,50,000/-
+                                        </span>
+                                    </div>
+                                    <p id="sumWcWords" class="text-[10px] text-purple-200/80 font-medium italic leading-tight print-text-dark min-h-[14px]">
+                                        Two Lakh Fifty Thousand Only
+                                    </p>
                                 </div>
+
                             </div>
                         </div>
 
@@ -363,24 +401,6 @@
                             </p>
                             <p>
                                 • After Term Loan disbursement & processing fee debit, vendor RTGS of <strong><span id="protocolInvoiceAmt">₹6,84,210</span></strong> will clear seamlessly. Remaining balance remains safely parked as WC margin.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Clean Words Box with Figure (Round Figure, Strictly No "Rupees") -->
-                    <div class="p-3.5 bg-slate-950 border border-slate-800 rounded-xl space-y-2 print-border">
-                        <div class="flex justify-between items-center border-b border-slate-800 pb-1.5 print-border">
-                            <span class="font-bold text-slate-400 uppercase text-[10.5px] tracking-wider print-text-dark">
-                                Total Bank Loan Sanction Amount:
-                            </span>
-                            <span id="totalSanctionFigureDisplay" class="font-black text-amber-300 text-sm print-text-dark">
-                                ₹9,00,000/-
-                            </span>
-                        </div>
-                        <div>
-                            <span class="text-[10.5px] text-slate-400 block mb-0.5 font-medium print-text-dark">In Words:</span>
-                            <p id="totalSanctionInWords" class="text-amber-300 font-bold text-xs italic leading-relaxed print-text-dark">
-                                Nine Lakh Only
                             </p>
                         </div>
                     </div>
@@ -527,12 +547,9 @@
             let wcMarginShare = 0;
             let totalMarginMoney = 0;
 
-            // DOM Elements for dynamic labels
             const quotWordsEl = document.getElementById('quotationWords');
             const desLoanWordsEl = document.getElementById('desiredLoanWords');
             const wcWordsEl = document.getElementById('wcWords');
-            const finalFigureEl = document.getElementById('totalSanctionFigureDisplay');
-            const finalWordsEl = document.getElementById('totalSanctionInWords');
 
             if (currentMode === 'FORWARD') {
                 const rawQuotation = document.getElementById('quotationAmt').value.trim();
@@ -554,11 +571,9 @@
 
                 document.getElementById('formattedQuotationBadge').innerText = formatInr(invoiceAmt) + "/-";
                 
-                // Real-time Text Under Point 1 & 2
                 if (quotWordsEl) quotWordsEl.innerText = invoiceAmt > 0 ? numberToWordsIndianClean(invoiceAmt) : "";
                 if (desLoanWordsEl) desLoanWordsEl.innerText = "";
             } else {
-                // Reverse Mode: Desired Loan Driven
                 const rawDesired = document.getElementById('desiredLoanAmt').value.trim();
                 totalLoanSanction = rawDesired !== "" ? Math.round(parseFloat(rawDesired) || 0) : 0;
 
@@ -594,7 +609,6 @@
                 if (quotWordsEl) quotWordsEl.innerText = "";
             }
 
-            // Real-time Working Capital Words
             if (wcWordsEl) {
                 wcWordsEl.innerText = (includeWc && wcProjectAmt > 0) ? numberToWordsIndianClean(wcProjectAmt) : "";
             }
@@ -623,13 +637,22 @@
             document.getElementById('displayGstProcFee').innerText = formatInr(gstProcFee);
             document.getElementById('displayTotalProcFee').innerText = formatInr(totalProcDeduction);
 
-            // Summary Table
+            // Summary Table Top Items
             document.getElementById('sumQuotationValue').innerText = formatInr(invoiceAmt);
             document.getElementById('sumWcValue').innerText = formatInr(wcProjectAmt);
             document.getElementById('sumTotalProjectCost').innerText = formatInr(totalProjectCost);
-            document.getElementById('sumTotalLoanSanction').innerText = formatInr(totalLoanSanction);
-            document.getElementById('sumTlLoanSanction').innerText = formatInr(tlLoanSanction);
-            document.getElementById('sumWcLoanSanction').innerText = formatInr(wcLoanSanction);
+
+            // Point 4: Highlighted Loan Sanction & Breakup Display (Both Figure and Words)
+            document.getElementById('sumTotalLoanSanction').innerText = formatInr(totalLoanSanction) + "/-";
+            document.getElementById('sumTotalLoanSanctionWords').innerText = totalLoanSanction > 0 ? numberToWordsIndianClean(totalLoanSanction) : "Zero Only";
+            
+            document.getElementById('sumTlLoanSanction').innerText = formatInr(tlLoanSanction) + "/-";
+            document.getElementById('sumTlWords').innerText = tlLoanSanction > 0 ? numberToWordsIndianClean(tlLoanSanction) : "";
+            
+            document.getElementById('sumWcLoanSanction').innerText = formatInr(wcLoanSanction) + "/-";
+            document.getElementById('sumWcWords').innerText = wcLoanSanction > 0 ? numberToWordsIndianClean(wcLoanSanction) : "";
+
+            // Margin & Charges
             document.getElementById('sumTotalBorrowerMargin').innerText = formatInr(totalMarginMoney);
             document.getElementById('sumProcessingDeduction').innerText = formatInr(totalProcDeduction);
 
@@ -649,14 +672,6 @@
             } else {
                 auditText.innerHTML = `• Borrower must deposit <strong>${formatInr(customerDepositRequired)}</strong> (Term Loan Margin of <strong>${formatInr(tlMarginShare)}</strong> + Upfront Fees of <strong>${formatInr(totalProcDeduction)}</strong>).`;
             }
-
-            // Real-time Bottom Right Total Sanction Figure & Words
-            if (finalFigureEl) {
-                finalFigureEl.innerText = formatInr(totalLoanSanction) + "/-";
-            }
-            if (finalWordsEl) {
-                finalWordsEl.innerText = totalLoanSanction > 0 ? numberToWordsIndianClean(totalLoanSanction) : "Zero Only";
-            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -675,25 +690,21 @@
         function resetAppraisalForm() {
             if (!confirm("Are you sure you want to clear all entered details?")) return;
 
-            // Clear all text inputs
             document.getElementById('borrowerName').value = "";
             document.getElementById('loanSchemeName').value = "";
             document.getElementById('vendorName').value = "";
             
-            // Clear all numeric inputs
             document.getElementById('quotationAmt').value = "";
             document.getElementById('desiredLoanAmt').value = "";
             document.getElementById('reverseTlDesiredAmt').value = "";
             document.getElementById('wcRequirementAmt').value = "";
             
-            // Reset Dropdowns & Defaults
             document.getElementById('schemePreset').value = "CUSTOM";
             document.getElementById('marginPercent').value = "10";
             document.getElementById('procFeePercent').value = "1.30";
             document.getElementById('includeWc').checked = true;
             document.getElementById('absorbTotalMarginInTl').checked = true;
 
-            // Instantly clear words elements before calculateAssessment
             const quotWordsEl = document.getElementById('quotationWords');
             const desLoanWordsEl = document.getElementById('desiredLoanWords');
             const wcWordsEl = document.getElementById('wcWords');
@@ -701,7 +712,6 @@
             if (desLoanWordsEl) desLoanWordsEl.innerText = "";
             if (wcWordsEl) wcWordsEl.innerText = "";
 
-            // Run fresh assessment calculation (sets ₹0/- and Zero Only cleanly)
             calculateAssessment();
         }
     </script>
