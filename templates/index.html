@@ -12,10 +12,11 @@
 
     <!-- Top Header & Branding Banner -->
    <!-- Top Header & Branding Banner -->
-    <header class="bg-indigo-700 text-white shadow-lg py-4 px-6">
+   <!-- Top Header & Branding Banner with Extensible Quick Menu -->
+    <header class="bg-indigo-700 text-white shadow-lg py-4 px-6 relative z-30">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
 
-            <!-- Left Side: Title & Contact Details -->
+            <!-- Left Side: Title & Brand Info -->
             <div class="flex flex-col gap-2">
                 <!-- Triple Click Hidden Vault Trigger on Title -->
                 <div class="cursor-pointer select-none" onclick="handleSecretVaultClick()">
@@ -32,13 +33,61 @@
                     <span>✉️ <strong>skcwebdvlpmnt@gmail.com</strong></span>
                 </div>
 
-                <!-- Standalone Clean Button for Appraisal -->
-                <div class="pt-1">
-                    <a href="/appraisal" target="_blank" class="inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs shadow transition">
-                        <span>📊</span>
-                        <span>Margin & Loan Assessor</span>
-                    </a>
+                <!-- EXTENSIBLE TOOLS DROPDOWN MENU -->
+                <div class="relative inline-block text-left pt-1.5" id="bankingMenuWrapper">
+                    <button type="button" onclick="toggleBankingMenu(event)" 
+                            class="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold px-3.5 py-1.5 rounded-lg text-xs shadow-md transition">
+                        <span>🛠️ Banking Utilities</span>
+                        <span id="menuCaretIcon" class="text-[10px] transition-transform duration-200">▼</span>
+                    </button>
+
+                    <!-- Dropdown Content Box -->
+                    <div id="bankingDropdownMenu" 
+                         class="hidden absolute left-0 mt-2 w-72 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl py-2 z-50 divide-y divide-slate-800">
+                        
+                        <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Available Branch Tools
+                        </div>
+
+                        <!-- 1. Appraisal Calculator Link -->
+                        <div class="py-1">
+                            <a href="/appraisal" target="_blank" 
+                               class="flex items-center gap-2.5 px-3 py-2 text-xs text-amber-300 hover:bg-slate-800 hover:text-amber-200 font-semibold transition">
+                                <span class="text-sm">📊</span>
+                                <div>
+                                    <p class="leading-tight">Margin & Loan Assessor</p>
+                                    <span class="text-[10px] text-slate-400 font-normal">Quotation, Margin & RTGS Breakdown</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- 2. Future Link Slot 1 -->
+                        <div class="py-1">
+                            <a href="#" onclick="alert('Feature coming soon in next update!')" 
+                               class="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-slate-800 transition">
+                                <span class="text-sm">📑</span>
+                                <div>
+                                    <p class="leading-tight">CIBIL / Sanction Notes</p>
+                                    <span class="text-[10px] text-slate-500 font-normal">Future tool slot</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- 3. Future Link Slot 2 -->
+                        <div class="py-1">
+                            <a href="#" onclick="alert('Feature coming soon in next update!')" 
+                               class="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-slate-800 transition">
+                                <span class="text-sm">📈</span>
+                                <div>
+                                    <p class="leading-tight">EMI & Amortization Schedule</p>
+                                    <span class="text-[10px] text-slate-500 font-normal">Future tool slot</span>
+                                </div>
+                            </a>
+                        </div>
+
+                    </div>
                 </div>
+
             </div>
 
             <!-- WhatsApp Group Feedback QR Code Box -->
