@@ -186,7 +186,7 @@
                                 <label class="text-xs font-bold text-slate-400 block mb-1">TL ALLOCATION IN DESIRED LOAN (₹)</label>
                                 <input type="number" id="reverseTlDesiredAmt" value="650000" oninput="calculateAssessment()"
                                        class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-amber-300 font-bold focus:ring-1 focus:ring-amber-500">
-                                <span class="text-[10.5px] text-slate-500 block mt-1">Remaining amount will be auto-assigned to Working Capital.</span>
+                                <span class="text-[10.5px] text-slate-500 block mt-1">Remaining balance will be auto-assigned to Working Capital.</span>
                             </div>
                         </div>
                     </div>
@@ -216,7 +216,7 @@
                             <div>
                                 <label class="text-xs font-bold text-slate-400 block mb-1">FACILITY TYPE</label>
                                 <select id="wcFacilityType" onchange="calculateAssessment()"
-                                        class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-slate-200 font-semibold focus:ring-1 focus:ring-amber-500">
+                                         class="w-full text-xs p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-slate-200 font-semibold focus:ring-1 focus:ring-amber-500">
                                     <option value="Cash Credit (Hypothecation)">Cash Credit (Hypothecation)</option>
                                     <option value="Overdraft (Clean / Hypothecation)">Overdraft (Clean / Hypothecation)</option>
                                 </select>
@@ -368,12 +368,21 @@
                     </div>
 
                     <!-- Clean Words Box with Figure (Round Figure, No "Rupees") -->
-                    <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1 print-border">
-                        <div class="flex justify-between items-center">
-                            <span class="font-bold text-slate-400 uppercase text-[10.5px] tracking-wider print-text-dark">Total Bank Loan Sanction in Words:</span>
-                            <span id="totalSanctionFigureDisplay" class="font-black text-amber-400 text-xs">₹9,00,000/-</span>
+                    <div class="p-3.5 bg-slate-950 border border-slate-800 rounded-xl space-y-2 print-border">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-1.5 print-border">
+                            <span class="font-bold text-slate-400 uppercase text-[10.5px] tracking-wider print-text-dark">
+                                Total Bank Loan Sanction Amount:
+                            </span>
+                            <span id="totalSanctionFigureDisplay" class="font-black text-amber-300 text-sm print-text-dark">
+                                ₹9,00,000/-
+                            </span>
                         </div>
-                        <p id="totalSanctionInWords" class="text-amber-300 font-bold text-xs italic print-text-dark">Nine Lakh Only</p>
+                        <div>
+                            <span class="text-[10.5px] text-slate-400 block mb-0.5 font-medium print-text-dark">In Words:</span>
+                            <p id="totalSanctionInWords" class="text-amber-300 font-bold text-xs italic leading-relaxed print-text-dark">
+                                Nine Lakh Only
+                            </p>
+                        </div>
                     </div>
 
                 </div>
@@ -406,18 +415,24 @@
                 return inWords(Math.floor(n / 10000000)) + 'Crore ' + inWords(n % 10000000);
             }
 
-            let str = inWords(num).trim(); // NO "Rupees" word
+            let str = inWords(num).trim();
             return str ? (str + " Only") : "Zero Only";
         }
 
         // INDIAN COMMA FORMATTER (₹9,00,000)
         function formatInr(val) {
-            if (isNaN(val) || val === null) return "₹0";
+            if (isNaN(val) || val === null || val === undefined) return "₹0";
             let clean = Math.round(val).toString();
+            let isNegative = false;
+            if (clean.startsWith('-')) {
+                isNegative = true;
+                clean = clean.substring(1);
+            }
             let lastThree = clean.substring(clean.length - 3);
             let otherNumbers = clean.substring(0, clean.length - 3);
             if (otherNumbers !== '') lastThree = ',' + lastThree;
-            return "₹" + otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+            const res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+            return (isNegative ? "-₹" : "₹") + (res || "0");
         }
 
         function switchAssessmentMode(mode) {
@@ -486,10 +501,13 @@
         }
 
         function calculateAssessment() {
-            const borrower = document.getElementById('borrowerName').value.trim() || "M/s Sharma Enterprises";
-            const scheme = document.getElementById('loanSchemeName').value.trim() || "PMEGP Term Loan & CC";
-            const marginPct = parseFloat(document.getElementById('marginPercent').value || "0") / 100;
-            const procFeePct = parseFloat(document.getElementById('procFeePercent').value || "0") / 100;
+            const borrowerInput = document.getElementById('borrowerName').value.trim();
+            const schemeInput = document.getElementById('loanSchemeName').value.trim();
+            const borrower = borrowerInput || "M/s Sharma Enterprises";
+            const scheme = schemeInput || "PMEGP Term Loan & CC";
+
+            const marginPct = (parseFloat(document.getElementById('marginPercent').value) || 0) / 100;
+            const procFeePct = (parseFloat(document.getElementById('procFeePercent').value) || 0) / 100;
             const includeWc = document.getElementById('includeWc').checked;
             const absorbTotalMarginInTl = document.getElementById('absorbTotalMarginInTl').checked;
 
@@ -506,40 +524,40 @@
             let totalMarginMoney = 0;
 
             if (currentMode === 'FORWARD') {
-                invoiceAmt = Math.round(parseFloat(document.getElementById('quotationAmt').value || "0"));
-                wcProjectAmt = includeWc ? Math.round(parseFloat(document.getElementById('wcRequirementAmt').value || "0")) : 0;
+                invoiceAmt = Math.round(parseFloat(document.getElementById('quotationAmt').value) || 0);
+                wcProjectAmt = includeWc ? Math.round(parseFloat(document.getElementById('wcRequirementAmt').value) || 0) : 0;
                 
                 totalProjectCost = invoiceAmt + wcProjectAmt;
                 totalMarginMoney = Math.round(totalProjectCost * marginPct);
 
                 tlMarginShare = Math.round(invoiceAmt * marginPct);
-                tlLoanSanction = invoiceAmt - tlMarginShare;
+                tlLoanSanction = Math.max(0, invoiceAmt - tlMarginShare);
 
                 wcMarginShare = Math.round(wcProjectAmt * marginPct);
-                wcLoanSanction = wcProjectAmt - wcMarginShare;
+                wcLoanSanction = Math.max(0, wcProjectAmt - wcMarginShare);
 
                 totalLoanSanction = tlLoanSanction + wcLoanSanction;
 
                 document.getElementById('formattedQuotationBadge').innerText = formatInr(invoiceAmt) + "/-";
             } else {
                 // Reverse Mode: Customer Desired Loan
-                totalLoanSanction = Math.round(parseFloat(document.getElementById('desiredLoanAmt').value || "0"));
+                totalLoanSanction = Math.round(parseFloat(document.getElementById('desiredLoanAmt').value) || 0);
                 const divisor = (1 - marginPct) > 0 ? (1 - marginPct) : 1;
-                totalProjectCost = Math.round(totalLoanSanction / divisor);
-                totalMarginMoney = totalProjectCost - totalLoanSanction;
+                totalProjectCost = totalLoanSanction > 0 ? Math.round(totalLoanSanction / divisor) : 0;
+                totalMarginMoney = Math.max(0, totalProjectCost - totalLoanSanction);
 
                 if (includeWc) {
-                    let desiredTlLoan = Math.round(parseFloat(document.getElementById('reverseTlDesiredAmt').value || "0"));
+                    let desiredTlLoan = Math.round(parseFloat(document.getElementById('reverseTlDesiredAmt').value) || 0);
                     if (desiredTlLoan > totalLoanSanction) desiredTlLoan = totalLoanSanction;
                     
                     tlLoanSanction = desiredTlLoan;
-                    wcLoanSanction = totalLoanSanction - tlLoanSanction;
+                    wcLoanSanction = Math.max(0, totalLoanSanction - tlLoanSanction);
 
-                    invoiceAmt = Math.round(tlLoanSanction / divisor);
-                    wcProjectAmt = totalProjectCost - invoiceAmt;
+                    invoiceAmt = tlLoanSanction > 0 ? Math.round(tlLoanSanction / divisor) : 0;
+                    wcProjectAmt = Math.max(0, totalProjectCost - invoiceAmt);
 
-                    tlMarginShare = invoiceAmt - tlLoanSanction;
-                    wcMarginShare = wcProjectAmt - wcLoanSanction;
+                    tlMarginShare = Math.max(0, invoiceAmt - tlLoanSanction);
+                    wcMarginShare = Math.max(0, wcProjectAmt - wcLoanSanction);
                 } else {
                     tlLoanSanction = totalLoanSanction;
                     wcLoanSanction = 0;
@@ -552,16 +570,13 @@
                 document.getElementById('formattedDesiredLoanBadge').innerText = formatInr(totalLoanSanction) + "/-";
             }
 
-            // Processing Fee Calculation on Term Loan (e.g. 6,50,000 * 1.30% = 8,450; GST = 1,521; Total = 9,971)
+            // Processing Fee Calculation on Term Loan
             const baseProcFee = Math.round(tlLoanSanction * procFeePct);
             const gstProcFee = Math.round(baseProcFee * 0.18);
             const totalProcDeduction = baseProcFee + gstProcFee;
-
             const netTlDisbursed = tlLoanSanction - totalProcDeduction;
 
-            // 100% AUDIT-PROOF DEPOSIT CALCULATION:
-            // If absorbTotalMarginInTl is ON: Customer deposits Full Project Margin + Upfront Fees
-            // If OFF: Customer deposits TL Margin + Upfront Fees
+            // Audit-Proof Deposit Calculation
             let customerDepositRequired = 0;
             if (absorbTotalMarginInTl && includeWc) {
                 customerDepositRequired = totalMarginMoney + totalProcDeduction;
@@ -569,15 +584,17 @@
                 customerDepositRequired = tlMarginShare + totalProcDeduction;
             }
 
-            // Update UI
+            // Update UI - Header & Badges
             document.getElementById('displayBorrowerTitle').innerText = borrower;
             document.getElementById('displaySchemeTitle').innerText = `Scheme: ${scheme} (Margin: ${(marginPct * 100).toFixed(1)}%)`;
             document.getElementById('procFeeRateBadge').innerText = `Rate: ${(procFeePct * 100).toFixed(2)}% + 18% GST`;
 
+            // Processing Cards
             document.getElementById('displayBaseProcFee').innerText = formatInr(baseProcFee);
             document.getElementById('displayGstProcFee').innerText = formatInr(gstProcFee);
             document.getElementById('displayTotalProcFee').innerText = formatInr(totalProcDeduction);
 
+            // Summary Table
             document.getElementById('sumQuotationValue').innerText = formatInr(invoiceAmt);
             document.getElementById('sumWcValue').innerText = formatInr(wcProjectAmt);
             document.getElementById('sumTotalProjectCost').innerText = formatInr(totalProjectCost);
@@ -587,13 +604,14 @@
             document.getElementById('sumTotalBorrowerMargin').innerText = formatInr(totalMarginMoney);
             document.getElementById('sumProcessingDeduction').innerText = formatInr(totalProcDeduction);
 
+            // Vendor RTGS Protocol
             document.getElementById('rtgsInvoiceTarget').innerText = formatInr(invoiceAmt);
             document.getElementById('rtgsNetTlDisbursed').innerText = "(-) " + formatInr(netTlDisbursed);
             document.getElementById('rtgsGrossTl').innerText = formatInr(tlLoanSanction);
             document.getElementById('rtgsProcDeducted').innerText = formatInr(totalProcDeduction);
             document.getElementById('rtgsCustomerDepositRequired').innerText = formatInr(customerDepositRequired);
 
-            // Audit Protocol Explanation
+            // Operational Execution Note
             document.getElementById('protocolDepositAmt').innerText = formatInr(customerDepositRequired);
             document.getElementById('protocolInvoiceAmt').innerText = formatInr(invoiceAmt);
             const auditText = document.getElementById('auditExplanationText');
@@ -603,13 +621,14 @@
                 auditText.innerHTML = `• Borrower must deposit <strong>${formatInr(customerDepositRequired)}</strong> (Term Loan Margin of <strong>${formatInr(tlMarginShare)}</strong> + Upfront Fees of <strong>${formatInr(totalProcDeduction)}</strong>).`;
             }
 
-            // Clean Round Words with Figure Display
+            // Dynamic Words & Figures Refresh (Zero Handling)
             document.getElementById('quotationWords').innerText = invoiceAmt > 0 ? numberToWordsIndianClean(invoiceAmt) : "";
             document.getElementById('desiredLoanWords').innerText = totalLoanSanction > 0 ? numberToWordsIndianClean(totalLoanSanction) : "";
             document.getElementById('wcWords').innerText = wcProjectAmt > 0 ? numberToWordsIndianClean(wcProjectAmt) : "";
             
+            // Total Sanction Box (Both Figure and Clean Words)
             document.getElementById('totalSanctionFigureDisplay').innerText = formatInr(totalLoanSanction) + "/-";
-            document.getElementById('totalSanctionInWords').innerText = numberToWordsIndianClean(totalLoanSanction);
+            document.getElementById('totalSanctionInWords').innerText = totalLoanSanction > 0 ? numberToWordsIndianClean(totalLoanSanction) : "Zero Only";
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -623,7 +642,8 @@
             }
             calculateAssessment();
         });
-        // CLEAR / RESET ALL FORM INPUTS AND SUMMARY
+
+        // CLEAR / RESET ALL FORM INPUTS AND SUMMARY PROPERLY
         function resetAppraisalForm() {
             if (!confirm("Are you sure you want to clear all entered details?")) return;
 
@@ -632,20 +652,20 @@
             document.getElementById('loanSchemeName').value = "";
             document.getElementById('vendorName').value = "";
             
-            // Numeric Values Reset
+            // Numeric Values Clear
             document.getElementById('quotationAmt').value = "";
             document.getElementById('desiredLoanAmt').value = "";
             document.getElementById('reverseTlDesiredAmt').value = "";
             document.getElementById('wcRequirementAmt').value = "";
             
-            // Defaults
+            // Defaults Preset
             document.getElementById('schemePreset').value = "CUSTOM";
             document.getElementById('marginPercent').value = "10";
             document.getElementById('procFeePercent').value = "1.30";
             document.getElementById('includeWc').checked = true;
             document.getElementById('absorbTotalMarginInTl').checked = true;
 
-            // Recalculate to update empty states
+            // Recalculate will cleanly reset everything to ₹0 and Zero Only
             calculateAssessment();
         }
     </script>
