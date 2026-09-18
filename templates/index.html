@@ -1182,6 +1182,32 @@
                 setTimeout(() => { progressContainer.classList.add('hidden'); }, 3000);
             }
         }
+        // Banking Utilities Dropdown Toggle
+        function toggleBankingMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('bankingDropdownMenu');
+            const caret = document.getElementById('menuCaretIcon');
+            const isHidden = menu.classList.contains('hidden');
+            
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                caret.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                caret.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Close menu when clicking outside
+        window.addEventListener('click', (e) => {
+            const menu = document.getElementById('bankingDropdownMenu');
+            const wrapper = document.getElementById('bankingMenuWrapper');
+            if (menu && !menu.classList.contains('hidden') && wrapper && !wrapper.contains(e.target)) {
+                menu.classList.add('hidden');
+                const caret = document.getElementById('menuCaretIcon');
+                if (caret) caret.style.transform = 'rotate(0deg)';
+            }
+        });
     </script>
 </body>
 </html>
